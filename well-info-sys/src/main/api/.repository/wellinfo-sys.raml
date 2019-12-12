@@ -1,0 +1,144 @@
+#%RAML 1.0
+title: wellinfo-sys
+version: 1.0-dev
+documentation: 
+- title: Well Information API
+  content: The Well Information System API provides features to query from WellView.
+baseUri: https://moc-wellinfo-sys-dev.cloubhub.io/api/v1
+securitySchemes: 
+  basic:
+    displayName: HTTP Basic Authentication
+    description: This API supports Basic Authentication
+    type: Basic Authentication
+securedBy: [ basic ]
+/well:
+  get:
+    description: Get information from all wells
+    queryParameters: 
+      startIndex:
+        displayName: startIndex (optional)
+        description: startIndex
+        type: number
+        required: false
+        example: 1
+      count:
+        displayName: count (optional)
+        description: rows to return
+        type: number
+        required: false
+        example: 10
+    responses: 
+      200:
+        body: 
+          application/json:
+            example: !include examples/getWellData.example
+  /country:
+    /{countryName}:
+      get:
+        description: Get well information for country
+        queryParameters: 
+          startIndex:
+            displayName: startIndex (optional)
+            description: startIndex
+            type: number
+            required: false
+            example: 1
+          count:
+            displayName: count (optional)
+            description: rows to return
+            type: number
+            required: false
+            example: 10
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/getWellData.example
+  /district:
+    /{districtName}:
+      get:
+        description: Get well information for district name
+        queryParameters: 
+          startIndex:
+            displayName: startIndex (optional)
+            description: startIndex
+            type: number
+            required: false
+            example: 1
+          count:
+            displayName: count (optional)
+            description: rows to return
+            type: number
+            required: false
+            example: 10
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/getWellData.example
+      /report/{daysBack}/{jobType}:
+        get:
+          description: Get reports on well from a number of days back for particular job type
+          responses:
+            200:
+              body: 
+                application/json:
+                  example: !include examples/getReportDaysBack.example
+  /{wellId}:
+    get:
+      description: Get information associated with a Well Id
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: !include examples/getWellById.example
+    /job:
+      get:
+        description: Get job(s) on a particular Well Id
+        responses:
+          200:
+            body: 
+              application/json:
+                example: !include examples/getJobsByWellId.example
+      /{jobId}:
+        get:
+          description: Get job by job Id
+          responses: 
+            200:
+              body: 
+                application/json:
+                  example: !include examples/getJobByJobId.example
+        /report:
+          get:
+            description: Get report by job Id
+            responses: 
+              200:
+                body: 
+                  application/json:
+                    example: !include examples/getReportByJobId.example
+        /rig:
+          get:
+            description: Get information on rig(s) associated with the job
+            responses: 
+              200:
+                body: 
+                  application/json:
+                    example: !include examples/getRigDataByJobId.example
+      /report:
+        get:
+          description: Get job report(s) on a particular Well Id
+          responses: 
+            200:
+              body: 
+                application/json:
+                  example: !include examples/getReportsByJob.example
+  /name/{wellName}:
+    get:
+      description: Get information associated with a Well name
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: !include examples/getWellByName.example
+      
+    

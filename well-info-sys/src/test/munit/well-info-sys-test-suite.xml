@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd">
+    <munit:config mock-connectors="false" mock-inbounds="false" name="munit" doc:name="MUnit configuration"/>
+    <spring:beans>
+        <spring:import resource="classpath:global.xml"/>
+        <spring:import resource="classpath:well-info-sys.xml"/>
+        <spring:import resource="classpath:well-info-sys-impl.xml"/>
+        <spring:import resource="classpath:well-info-sys-error-handler.xml"/>
+    </spring:beans>
+    <munit:test name="well-info-sys-test-suite-get:/well/{wellId}:wellinfo-sys-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock get well data ">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Wellview Database']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[[{&quot;userdttm4&quot;:&quot;2014-09-30 00:00:00.0&quot;,&quot;dttmfirstprod&quot;:&quot;2014-09-17 09:00:00.0&quot;,&quot;userboolean5&quot;:&quot;0&quot;,&quot;kbtocascalc&quot;:&quot;null&quot;,&quot;slot&quot;:&quot;null&quot;,&quot;welltyp2&quot;:&quot;null&quot;,&quot;welllicensee&quot;:&quot;The Railroad Commision of Texas&quot;,&quot;usertxt4&quot;:&quot;01&quot;,&quot;userboolean4&quot;:&quot;0&quot;,&quot;dttmwelllic&quot;:&quot;2014-05-15 09:30:00.0&quot;,&quot;locationnote&quot;:&quot;null&quot;,&quot;latlongdatum&quot;:&quot;NAD 27&quot;,&quot;syssecuritytyp&quot;:&quot;ONSUS_NON_TIGHT&quot;,&quot;displaceunwrapcalc&quot;:&quot;2022.557382323717&quot;,&quot;syscreatedate&quot;:&quot;2014-05-08 15:17:17.667&quot;}]]" mimeType="application/java"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[['wellId':&quot;003E653EB7E64EE39E3F468BD92D43E0&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/well/{wellId}:wellinfo-sys-config" doc:name="Flow-ref to get:/well/{wellId}:wellinfo-sys-config"/>
+        <munit:assert-on-equals message="Message is not as expected" expectedValue="#[getResource('responses/getWellData.json').asString().replaceAll('\\s+','')]" actualValue="#[payload.replaceAll('\\s+','')]" doc:name="Assert Equals"/>
+        <mock:verify-call messageProcessor=".*:.*" times="1" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['-Logger']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="well-info-sys-test-suite-get:/well/{wellId}/job:wellinfo-sys-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock get well data ">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Wellview Database']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[[{&quot;varianceafefinalcalc&quot;:&quot;1559000.0&quot;, &quot;jobidc&quot;:&quot;null&quot;, &quot;variancefieldcalc&quot;:&quot;-67006.05000000028&quot;,&quot;projectrefnumbercalc&quot;:&quot;9&quot;,&quot;mudcostcalc&quot;:&quot;59706.86000000001&quot;, &quot;durationtechlimittotalcalc&quot;:&quot;0.0&quot;,&quot;usertxt4&quot;:&quot;null&quot;,&quot;durationpersonnelotcalc&quot;:&quot;null&quot;,&quot;dttmstartplan&quot;:&quot;null&quot;,&quot;durationproblemtimecalc&quot;:&quot;1.3125&quot;,&quot;summarygeo&quot;:&quot;null&quot;,&quot;afetotalnormcalc&quot;:&quot;1559000.0&quot;,&quot;safetyincnocalc&quot;:&quot;0.0&quot;,&quot;durationpersonnelregcalc&quot;:&quot;201.43750000000017&quot;,&quot;afepertargetdepthcalc&quot;:&quot;410.35888602866953&quot;}]]" mimeType="application/java"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[['wellId':&quot;003E653EB7E64EE39E3F468BD92D43E0&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/well/{wellId}/job:wellinfo-sys-config" doc:name="Flow-ref to get:/well/{wellId}/job:wellinfo-sys-config"/>
+        <munit:assert-on-equals message="Message is not as expected" expectedValue="#[getResource('responses/getWellJobData.json').asString().replaceAll('\\s+','')]" actualValue="#[payload.replaceAll('\\s+','')]" doc:name="Assert Equals"/>
+        <mock:verify-call messageProcessor=".*:.*" times="1" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['-Logger']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="well-info-sys-test-suite-get:/well/{wellId}/job/report:wellinfo-sys-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock get well data ">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Wellview Database']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[[{&quot;costtodatecalc&quot;:&quot;53162.0&quot;,&quot;durationtimelogcumspudcalc&quot;:&quot;0.9999999990686774&quot;,&quot;volmudactivevarcalc&quot;:&quot;0.0&quot;,&quot;condweather&quot;:&quot;null&quot;,&quot;usertxt4&quot;:&quot;null&quot;,&quot;durationpersonnelotcalc&quot;:&quot;null&quot;,&quot;costprojectedmlphasecalc&quot;:&quot;53162.0&quot;,&quot;h2smax&quot;:&quot;null&quot;,&quot;durationproblemtimecalc&quot;:&quot;0.0&quot;,&quot;costmudaddtodatenormcalc&quot;:&quot;3635.0&quot;,&quot;statusend&quot;:&quot;Cutting Core #1 at 612m&quot;,&quot;safetyincnocalc&quot;:&quot;null&quot;,&quot;durnoprobtimecumdayscalc&quot;:&quot;0.9999999990686774&quot;,&quot;idrecjobprogramphasecalctk&quot;:&quot;wvjobprogramphase&quot;,&quot;durationpersonnelregcalc&quot;:&quot;8.5&quot;,&quot;idrecnextcastk&quot;:&quot;null&quot;,&quot;volmudactivecalc&quot;:&quot;0.0&quot;,&quot;usertxt2&quot;:&quot;null&quot;,&quot;syscreatedate&quot;:&quot;2013-07-16 12:49:55.0&quot;,&quot;depthtvdenddpcalc&quot;:&quot;-54.21629606449936&quot;}]]" mimeType="application/java"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[['wellId':&quot;003E653EB7E64EE39E3F468BD92D43E0&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/well/{wellId}/job/report:wellinfo-sys-config" doc:name="Flow-ref to get:/well/{wellId}/job/report:wellinfo-sys-config"/>
+        <munit:assert-on-equals message="Message is not as expected" expectedValue="#[getResource('responses/getWellJobReportData.json').asString().replaceAll('\\s+','')]" actualValue="#[payload.replaceAll('\\s+','')]" doc:name="Assert Equals"/>
+        <mock:verify-call messageProcessor=".*:.*" times="1" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['-Logger']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="well-info-sys-test-suite-get:/well/{wellId}/job/{jobId}:wellinfo-sys-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock get well data ">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Wellview Database']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[[{&quot;varianceafefinalcalc&quot;:&quot;1559000.0&quot;,&quot;jobidc&quot;:&quot;null&quot;,&quot;variancefieldcalc&quot;:&quot;-67006.05000000028&quot;,&quot;projectrefnumbercalc&quot;:&quot;9&quot;,&quot;mudcostcalc&quot;:&quot;59706.86000000001&quot;,&quot;durationtechlimittotalcalc&quot;:&quot;0.0&quot;,&quot;usertxt4&quot;:&quot;null&quot;,&quot;durationpersonnelotcalc&quot;:&quot;null&quot;,&quot;dttmstartplan&quot;:&quot;null&quot;,&quot;durationproblemtimecalc&quot;:&quot;1.3125&quot;,&quot;summarygeo&quot;:&quot;null&quot;,&quot;afetotalnormcalc&quot;:&quot;1559000.0&quot;,&quot;safetyincnocalc&quot;:&quot;0.0&quot;,&quot;durationpersonnelregcalc&quot;:&quot;201.43750000000017&quot;,&quot;afepertargetdepthcalc&quot;:&quot;410.35888602866953&quot;,&quot;estcostnormsavecalc&quot;:&quot;null&quot;,&quot;syscreatedate&quot;:&quot;2014-05-08 15:17:17.667&quot;,&quot;usertxt2&quot;:&quot;null&quot;,&quot;depthperratiodurationcalc&quot;:&quot;12395.097113924041&quot;}]]" mimeType="application/java"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[['wellId':&quot;003E653EB7E64EE39E3F468BD92D43E0&quot;,'jobId':&quot;CACCA949868A434DA0A45C5D9F7D8BD7&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/well/{wellId}/job/{jobId}:wellinfo-sys-config" doc:name="Flow-ref to get:/well/{wellId}/job/{jobId}:wellinfo-sys-config"/>
+        <munit:assert-on-equals message="Message is not as expected" expectedValue="#[getResource('responses/getWellJobIdData.json').asString().replaceAll('\\s+','')]" actualValue="#[payload.replaceAll('\\s+','')]" doc:name="Assert Equals"/>
+        <mock:verify-call messageProcessor=".*:.*" times="1" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['-Logger']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="well-info-sys-test-suite-get:/well/{wellId}/job/{jobId}/report:wellinfo-sys-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock get well data ">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Wellview Database']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[[{&quot;costtodatecalc&quot;:&quot;200576.75&quot;,&quot;durationtimelogcumspudcalc&quot;:&quot;0.5208333333333337&quot;,&quot;volmudactivevarcalc&quot;:&quot;33.9722447730636&quot;,&quot;condweather&quot;:&quot;null&quot;,&quot;usertxt4&quot;:&quot;null&quot;,&quot;durationpersonnelotcalc&quot;:&quot;null&quot;,&quot;costprojectedmlphasecalc&quot;:&quot;200576.75&quot;,&quot;h2smax&quot;:&quot;null&quot;,&quot;durationproblemtimecalc&quot;:&quot;0.020833333333333332&quot;,&quot;costmudaddtodatenormcalc&quot;:&quot;11714.0&quot;,&quot;statusend&quot;:&quot;null&quot;,&quot;safetyincnocalc&quot;:&quot;null&quot;,&quot;durnoprobtimecumdayscalc&quot;:&quot;0.7083333333333339&quot;,&quot;idrecjobprogramphasecalctk&quot;:&quot;wvjobprogramphase&quot;,&quot;durationpersonnelregcalc&quot;:&quot;20.208333333333353&quot;,&quot;idrecnextcastk&quot;:&quot;null&quot;,&quot;volmudactivecalc&quot;:&quot;33.9722447730636&quot;}]]" mimeType="application/java"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[['wellId':&quot;003E653EB7E64EE39E3F468BD92D43E0&quot;,'jobId':&quot;CACCA949868A434DA0A45C5D9F7D8BD7&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/well/{wellId}/job/{jobId}/report:wellinfo-sys-config" doc:name="Flow-ref to get:/well/{wellId}/job/{jobId}/report:wellinfo-sys-config"/>
+        <munit:assert-on-equals message="Message is not as expected" expectedValue="#[getResource('responses/getWellJobIdReportData.json').asString().replaceAll('\\s+','')]" actualValue="#[payload.replaceAll('\\s+','')]" doc:name="Assert Equals"/>
+        <mock:verify-call messageProcessor=".*:.*" times="1" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['-Logger']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="well-info-sys-test-suite-get:/well/{wellId}/job/{jobId}/rig:wellinfo-sys-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock get well data ">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Wellview Database']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[[{&quot;volchokelinecalc&quot;:&quot;null&quot;,&quot;szidchokeline&quot;:&quot;null&quot;,&quot;lengthkillline&quot;:&quot;null&quot;,&quot;waterdepthmax&quot;:&quot;null&quot;,&quot;drawworkmodel&quot;:&quot;null&quot;,&quot;hookloadmax&quot;:&quot;null&quot;,&quot;idrec&quot;:&quot;3C901E99B1114822A52C0A7A71D65A11&quot;,&quot;contractor&quot;:&quot;Helmerich &amp; Payne Drilling&quot;,&quot;setbackcapacity&quot;:&quot;null&quot;,&quot;depthmax&quot;:&quot;null&quot;,&quot;weightblock&quot;:&quot;null&quot;,&quot;drawworkmake&quot;:&quot;null&quot;,&quot;idrecjobcontactcontractor&quot;:&quot;1F93BC5759924A4EAA150AEBFD056AD1&quot;,&quot;syscreatedate&quot;:&quot;2014-05-08 15:17:17.667&quot;,&quot;anchorno&quot;:&quot;null&quot;,&quot;torquemax&quot;:&quot;null&quot;,&quot;dttmend&quot;:&quot;null&quot;,&quot;anchorlinetyp&quot;:&quot;null&quot;,&quot;dttmstart&quot;:&quot;2014-06-22 09:00:00.0&quot;,&quot;purpose&quot;:&quot;null&quot;,&quot;typ2&quot;:&quot;null&quot;,&quot;idrecparent&quot;:&quot;CACCA949868A434DA0A45C5D9F7D8BD7&quot;}]]" mimeType="application/java"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[['wellId':&quot;003E653EB7E64EE39E3F468BD92D43E0&quot;,'jobId':&quot;CACCA949868A434DA0A45C5D9F7D8BD7&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/well/{wellId}/job/{jobId}/rig:wellinfo-sys-config" doc:name="Flow-ref to get:/well/{wellId}/job/{jobId}/rig:wellinfo-sys-config"/>
+        <munit:assert-on-equals message="Message is not as expected" expectedValue="#[getResource('responses/getWellJobIdRigData.json').asString().replaceAll('\\s+','')]" actualValue="#[payload.replaceAll('\\s+','')]" doc:name="Assert Equals"/>
+        <mock:verify-call messageProcessor=".*:.*" times="1" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['-Logger']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="well-info-sys-test-suite-get:/well:wellinfo-sys-configTest" description="Test" ignore="true">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock get well data ">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Wellview Database']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[[{&quot;userdttm4&quot;:&quot;2014-09-30 00:00:00.0&quot;,&quot;dttmfirstprod&quot;:&quot;2014-09-17 09:00:00.0&quot;,&quot;userboolean5&quot;:&quot;0&quot;,&quot;kbtocascalc&quot;:&quot;null&quot;,&quot;slot&quot;:&quot;null&quot;,&quot;welltyp2&quot;:&quot;null&quot;,&quot;welllicensee&quot;:&quot;The Railroad Commision of Texas&quot;,&quot;usertxt4&quot;:&quot;01&quot;,&quot;userboolean4&quot;:&quot;0&quot;,&quot;dttmwelllic&quot;:&quot;2014-05-15 09:30:00.0&quot;,&quot;locationnote&quot;:&quot;null&quot;,&quot;latlongdatum&quot;:&quot;NAD 27&quot;,&quot;syssecuritytyp&quot;:&quot;ONSUS_NON_TIGHT&quot;,&quot;displaceunwrapcalc&quot;:&quot;2022.557382323717&quot;,&quot;syscreatedate&quot;:&quot;2014-05-08 15:17:17.667&quot;}]]" mimeType="application/java"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.query.params" value="#[['startIndex':&quot;1&quot;,'count':&quot;5&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/well:wellinfo-sys-config" doc:name="Flow-ref to get:/well:wellinfo-sys-config"/>
+        <munit:assert-on-equals message="Message is not as expected" expectedValue="#[getResource('responses/getAllWellData.json').asString().replaceAll('\\s+','')]" actualValue="#[payload.replaceAll('\\s+','')]" doc:name="Assert Equals"/>
+        <mock:verify-call messageProcessor=".*:.*" times="1" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['-Logger']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="well-info-sys-test-suite-get:/well/country/{countryName}:wellinfo-sys-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock get well data ">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Wellview Database']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[[{&quot;userdttm4&quot;: null,&quot;dttmfirstprod&quot;: null,&quot;userboolean5&quot;: null,&quot;kbtocascalc&quot;: null,&quot;slot&quot;: &quot;110000907695&quot;,&quot;welltyp2&quot;: null,&quot;welllicensee&quot;: null,&quot;usertxt4&quot;: null,&quot;syssecuritytyp&quot;: null,&quot;displaceunwrapcalc&quot;: 23.090145205470946,&quot;syscreatedate&quot;: 1373960068000,&quot;usertxt2&quot;: null,&quot;currentwellstatus1calc&quot;: null,&quot;wellida&quot;: &quot;100030708212W500&quot;,&quot;ewdist&quot;: 1871972.44093739,&quot;currentwelltyp2calc&quot;: null,&quot;riskclass&quot;: null,&quot;usertxt5&quot;: null,&quot;userboolean1&quot;: null,&quot;district&quot;: &quot;Canada&quot;,&quot;platform&quot;: null,&quot;userdttm5&quot;: null,&quot;operator&quot;: &quot;Murphy Oil Company Ltd&quot;,&quot;county&quot;: null,&quot;wellide&quot;: null,&quot;dttmrr&quot;: null,&quot;lease&quot;: null,&quot;usernum2&quot;: 0,&quot;operatorcode&quot;: null,&quot;elvorigkb&quot;: 2277.55908203125}]]" mimeType="application/java"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[['countryName':&quot;Canada&quot;]]"/>
+                <munit:inbound-property key="http.query.params" value="#[['startIndex':&quot;1&quot;,'count':&quot;5&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/well/country/{countryName}:wellinfo-sys-config" doc:name="Flow-ref to get:/well/country/{countryName}:wellinfo-sys-config"/>
+        <munit:assert-on-equals message="Message is not as expected" expectedValue="#[getResource('responses/getWellCountryData.json').asString().replaceAll('\\s+','')]" actualValue="#[payload.replaceAll('\\s+','')]" doc:name="Assert Equals"/>
+        <mock:verify-call messageProcessor=".*:.*" times="1" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['-Logger']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="well-info-sys-test-suite-get:/well/district/{districtName}:wellinfo-sys-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock get well data">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Wellview Database']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[[{&quot;userdttm4&quot;: 1412015400000,&quot;dttmfirstprod&quot;: 1410924600000,&quot;userboolean5&quot;: 0,&quot;kbtocascalc&quot;: null,&quot;slot&quot;: null,&quot;welltyp2&quot;: null,&quot;welllicensee&quot;: &quot;The Railroad Commision of Texas&quot;,&quot;usertxt4&quot;: &quot;01&quot;,&quot;userboolean4&quot;: 0,&quot;dttmwelllic&quot;: 1400126400000,&quot;locationnote&quot;: null,&quot;latlongdatum&quot;: &quot;NAD 27&quot;,&quot;syssecuritytyp&quot;: &quot;ONSUS_NON_TIGHT&quot;,&quot;displaceunwrapcalc&quot;: 2022.557382323717,&quot;syscreatedate&quot;: 1399542437667,&quot;usertxt2&quot;: &quot;Permit to Drill, Deepen, Plug Back, or Re-enter&quot;,&quot;currentwellstatus1calc&quot;: &quot;Drilling&quot;,&quot;wellida&quot;: &quot;42-127-36344&quot;}]]" mimeType="application/java"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[['districtName':&quot;Canada&quot;]]"/>
+                <munit:inbound-property key="http.query.params" value="#[['startIndex':&quot;1&quot;,'count':&quot;5&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/well/district/{districtName}:wellinfo-sys-config" doc:name="Flow-ref to get:/well/district/{districtName}:wellinfo-sys-config"/>
+        <munit:assert-on-equals message="Message is not as expected" expectedValue="#[getResource('responses/getWellDistrictData.json').asString().replaceAll('\\s+','')]" actualValue="#[payload.replaceAll('\\s+','')]" doc:name="Assert Equals"/>
+        <mock:verify-call messageProcessor=".*:.*" times="1" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['-Logger']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="well-info-sys-test-suite-get:/well/name/{wellName}:wellinfo-sys-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock get well data">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Wellview Database']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[[{&quot;userdttm4&quot;: 1412015400000,&quot;dttmfirstprod&quot;: 1410924600000,&quot;userboolean5&quot;: 0,&quot;kbtocascalc&quot;: null,&quot;slot&quot;: null,&quot;welltyp2&quot;: null,&quot;welllicensee&quot;: &quot;The Railroad Commision of Texas&quot;,&quot;usertxt4&quot;: &quot;01&quot;,&quot;userboolean4&quot;: 0,&quot;dttmwelllic&quot;: 1400126400000,&quot;locationnote&quot;: null,&quot;latlongdatum&quot;: &quot;NAD 27&quot;,&quot;syssecuritytyp&quot;: &quot;ONSUS_NON_TIGHT&quot;,&quot;displaceunwrapcalc&quot;: 2022.557382323717,&quot;syscreatedate&quot;: 1399542437667,&quot;usertxt2&quot;: &quot;Permit to Drill, Deepen, Plug Back, or Re-enter&quot;,&quot;currentwellstatus1calc&quot;: &quot;Drilling&quot;,&quot;wellida&quot;: &quot;42-127-36344&quot;}]]" mimeType="application/java"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[['wellName':&quot;MURPHY 1-27 HZ W675 SLAVE 2-22-83-15&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/well/name/{wellName}:wellinfo-sys-config" doc:name="Flow-ref to get:/well/name/{wellName}:wellinfo-sys-config"/>
+        <munit:assert-on-equals message="Message is not as expected" expectedValue="#[getResource('responses/getWellNameData.json').asString().replaceAll('\\s+','')]" actualValue="#[payload.replaceAll('\\s+','')]" doc:name="Assert Equals"/>
+        <mock:verify-call messageProcessor=".*:.*" times="1" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['-Logger']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="well-info-sys-test-suite-get:/well/district/{districtName}/report/{daysBack}/{jobType}:wellinfo-sys-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock DB">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Database']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[[{&quot;district&quot;: &quot;Canada&quot;,&quot;afetotalcalc&quot;: 5065000,&quot;costtotalcalc&quot;: 892771,&quot;idrec&quot;: &quot;C94366DFD8E3440A950DA9CE74CFFFBA&quot;,&quot;dttmstart&quot;: 1525064400000,&quot;idwell&quot;: &quot;0960B529EE7E4AFA94B5A768418B9A28&quot;,&quot;wellname&quot;: &quot;MURPHY 11-14A KAYBOBS 01-11-62-20&quot;,&quot;rigno&quot;: &quot;Non-Rig Work&quot;,&quot;wvtyp&quot;: &quot;Completion&quot;,&quot;fieldname&quot;: &quot;Kaybob South&quot;,&quot;usertxt1&quot;: &quot;Frac Operations&quot;,&quot;summaryops&quot;: &quot;Frac and perforating operations. Currently monitoring pressures for offset frac. Frac Interval #2, of 23.   Perf Interval # 3 of 23.  &quot;,&quot;dttmend&quot;: 1525150800000},{&quot;district&quot;: &quot;Canada&quot;,&quot;afetotalcalc&quot;: 5065000,&quot;costtotalcalc&quot;: 714585,&quot;idrec&quot;: &quot;30C2601851C54241A0177A857279E430&quot;,&quot;dttmstart&quot;: 1525064400000,&quot;idwell&quot;: &quot;E0E27610D8F04CE4ABD10B29CD30D4F4&quot;,&quot;wellname&quot;: &quot;MURPHY 11-14B 102 KAYBOBS 02-11-62-20&quot;,&quot;rigno&quot;: &quot;Non-Rig Work&quot;,&quot;wvtyp&quot;: &quot;Completion&quot;,&quot;fieldname&quot;: &quot;Kaybob South&quot;,&quot;usertxt1&quot;: &quot;Frac Operations&quot;,&quot;summaryops&quot;: &quot;Perf and frac 1 of 23 stages completed. Frac operations on adjacent wells. Monitor SICP via real time surface recorders.  &quot;,&quot;dttmend&quot;: 1525150800000}]]" mimeType="application/java"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[['districtName':&quot;US Onshore&quot;,'daysBack':&quot;1&quot;,'jobType':&quot;completion&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/well/district/{districtName}/report/{daysBack}/{jobType}:wellinfo-sys-config" doc:name="Flow-ref to get:/well/district/{districtName}/report/{daysBack}/{jobType}:wellinfo-sys-config"/>
+        <munit:assert-on-equals message="Message is not as expected" expectedValue="#[getResource('responses/getDistrictReportData.json').asString().replaceAll('\\s+','')]" actualValue="#[payload.replaceAll('\\s+','')]" doc:name="Assert Equals"/>
+        <mock:verify-call messageProcessor=".*:.*" times="1" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['-Logger']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    
+    <munit:test name="well-info-sys-test-suite-get:/well/international/report/{daysBack}/{jobType}:wellinfo-sys-configTest" description="Test">
+    	<mock:when messageProcessor=".*:.*" doc:name="Mock DB">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Database International']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[[{&quot;district&quot;: &quot;Canada&quot;,&quot;afetotalcalc&quot;: 5065000,&quot;costtotalcalc&quot;: 892771,&quot;idrec&quot;: &quot;C94366DFD8E3440A950DA9CE74CFFFBA&quot;,&quot;dttmstart&quot;: 1525064400000,&quot;idwell&quot;: &quot;0960B529EE7E4AFA94B5A768418B9A28&quot;,&quot;wellname&quot;: &quot;MURPHY 11-14A KAYBOBS 01-11-62-20&quot;,&quot;rigno&quot;: &quot;Non-Rig Work&quot;,&quot;wvtyp&quot;: &quot;Completion&quot;,&quot;fieldname&quot;: &quot;Kaybob South&quot;,&quot;usertxt1&quot;: &quot;Frac Operations&quot;,&quot;summaryops&quot;: &quot;Frac and perforating operations. Currently monitoring pressures for offset frac. Frac Interval #2, of 23.   Perf Interval # 3 of 23.  &quot;,&quot;dttmend&quot;: 1525150800000},{&quot;district&quot;: &quot;Canada&quot;,&quot;afetotalcalc&quot;: 5065000,&quot;costtotalcalc&quot;: 714585,&quot;idrec&quot;: &quot;30C2601851C54241A0177A857279E430&quot;,&quot;dttmstart&quot;: 1525064400000,&quot;idwell&quot;: &quot;E0E27610D8F04CE4ABD10B29CD30D4F4&quot;,&quot;wellname&quot;: &quot;MURPHY 11-14B 102 KAYBOBS 02-11-62-20&quot;,&quot;rigno&quot;: &quot;Non-Rig Work&quot;,&quot;wvtyp&quot;: &quot;Completion&quot;,&quot;fieldname&quot;: &quot;Kaybob South&quot;,&quot;usertxt1&quot;: &quot;Frac Operations&quot;,&quot;summaryops&quot;: &quot;Perf and frac 1 of 23 stages completed. Frac operations on adjacent wells. Monitor SICP via real time surface recorders.  &quot;,&quot;dttmend&quot;: 1525150800000}]]" mimeType="application/java"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[['districtName':&quot;US Onshore&quot;,'daysBack':&quot;1&quot;,'jobType':&quot;completion&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/well/international/report/{daysBack}/{jobType}:wellinfo-sys-config" doc:name="Flow-ref to get:/well/international/report/{daysBack}/{jobType}:wellinfo-sys-config"/>
+    	
+    	<munit:assert-on-equals message="Message is not as expected" expectedValue="#[getResource('responses/getDistrictReportData.json').asString().replaceAll('\\s+','')]" actualValue="#[payload.replaceAll('\\s+','')]" doc:name="Assert Equals"/>
+        <mock:verify-call messageProcessor=".*:.*" times="1" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['-Logger']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+</mule>

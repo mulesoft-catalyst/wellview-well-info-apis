@@ -1,0 +1,20 @@
+[{
+	"syscreatedate": 1399542437667,
+	"slot": null,
+	"dttmwelllic": 1400126400000,
+	"dttmfirstprod": 1410924600000,
+	"currentwellstatus1calc": "Drilling",
+	"welllicensee": "The Railroad Commision of Texas",
+	"wellida": "42-127-36344",
+	"syssecuritytyp": "ONSUS_NON_TIGHT",
+	"welltyp2": null,
+	"usertxt2": "Permit to Drill, Deepen, Plug Back, or Re-enter",
+	"usertxt4": "01",
+	"userdttm4": 1412015400000,
+	"userboolean4": 0,
+	"displaceunwrapcalc": 2022.557382323717,
+	"userboolean5": 0,
+	"kbtocascalc": null,
+	"locationnote": null,
+	"latlongdatum": "NAD 27"
+}]

@@ -1,0 +1,22 @@
+[{
+	"condweather": "null",
+	"durationproblemtimecalc": "0.0",
+	"durationpersonnelotcalc": "null",
+	"idrecjobprogramphasecalctk": "wvjobprogramphase",
+	"volmudactivevarcalc": "0.0",
+	"syscreatedate": "2013-07-16 12:49:55.0",
+	"durationtimelogcumspudcalc": "0.9999999990686774",
+	"durationpersonnelregcalc": "8.5",
+	"costmudaddtodatenormcalc": "3635.0",
+	"durnoprobtimecumdayscalc": "0.9999999990686774",
+	"costtodatecalc": "53162.0",
+	"costprojectedmlphasecalc": "53162.0",
+	"usertxt2": "null",
+	"usertxt4": "null",
+	"idrecnextcastk": "null",
+	"statusend": "Cutting Core #1 at 612m",
+	"safetyincnocalc": "null",
+	"h2smax": "null",
+	"depthtvdenddpcalc": "-54.21629606449936",
+	"volmudactivecalc": "0.0"
+}]

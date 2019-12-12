@@ -1,0 +1,19 @@
+[{
+	"condweather": "null",
+	"durationproblemtimecalc": "0.020833333333333332",
+	"durationpersonnelotcalc": "null",
+	"idrecjobprogramphasecalctk": "wvjobprogramphase",
+	"volmudactivevarcalc": "33.9722447730636",
+	"durationtimelogcumspudcalc": "0.5208333333333337",
+	"durationpersonnelregcalc": "20.208333333333353",
+	"costmudaddtodatenormcalc": "11714.0",
+	"durnoprobtimecumdayscalc": "0.7083333333333339",
+	"costtodatecalc": "200576.75",
+	"costprojectedmlphasecalc": "200576.75",
+	"usertxt4": "null",
+	"idrecnextcastk": "null",
+	"statusend": "null",
+	"safetyincnocalc": "null",
+	"h2smax": "null",
+	"volmudactivecalc": "33.9722447730636"
+}]

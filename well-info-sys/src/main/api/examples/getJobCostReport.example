@@ -1,0 +1,31 @@
+[{
+	"Job Day": 142.0,
+	"Cum Daily Cost": 884354.01,
+	"Daily Cost": 79000.0,
+	"Report Number": 27.0,
+	"operated": 0,
+	"idjob": "24493D34328E4701A53854A4B32B7CFE",
+	"summaryops": "Install Shores TM640D-365-168TH Pumpjack",
+	"Date": "2018-12-08",
+	"idwell": "03BB658BCDBE48538F26131C9CBC942C"
+}, {
+	"Job Day": 141.0,
+	"Cum Daily Cost": 805354.01,
+	"Daily Cost": 10559.36,
+	"Report Number": 26.0,
+	"operated": 0,
+	"idjob": "24493D34328E4701A53854A4B32B7CFE",
+	"summaryops": "Install 16\" Gravel Pan for Pumpjack Base",
+	"Date": "2018-12-07",
+	"idwell": "03BB658BCDBE48538F26131C9CBC942C"
+}, {
+	"Job Day": 143.0,
+	"Cum Daily Cost": 917703.7,
+	"Daily Cost": 33349.69,
+	"Report Number": 28.0,
+	"operated": 0,
+	"idjob": "24493D34328E4701A53854A4B32B7CFE",
+	"summaryops": "Install Unico VSD and Electrical System",
+	"Date": "2018-12-09",
+	"idwell": "03BB658BCDBE48538F26131C9CBC942C"
+}]

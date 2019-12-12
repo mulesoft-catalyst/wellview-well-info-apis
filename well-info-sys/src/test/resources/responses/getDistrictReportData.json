@@ -1,0 +1,29 @@
+[{
+	"usertxt1": "Frac Operations",
+	"idrec": "C94366DFD8E3440A950DA9CE74CFFFBA",
+	"dttmend": 1525150800000,
+	"rigno": "Non-Rig Work",
+	"wvtyp": "Completion",
+	"wellname": "MURPHY 11-14A KAYBOBS 01-11-62-20",
+	"idwell": "0960B529EE7E4AFA94B5A768418B9A28",
+	"fieldname": "Kaybob South",
+	"district": "Canada",
+	"dttmstart": 1525064400000,
+	"summaryops": "Frac and perforating operations. Currently monitoring pressures for offset frac. Frac Interval #2, of 23.   Perf Interval # 3 of 23.  ",
+	"costtotalcalc": 892771,
+	"afetotalcalc": 5065000
+}, {
+	"usertxt1": "Frac Operations",
+	"idrec": "30C2601851C54241A0177A857279E430",
+	"dttmend": 1525150800000,
+	"rigno": "Non-Rig Work",
+	"wvtyp": "Completion",
+	"wellname": "MURPHY 11-14B 102 KAYBOBS 02-11-62-20",
+	"idwell": "E0E27610D8F04CE4ABD10B29CD30D4F4",
+	"fieldname": "Kaybob South",
+	"district": "Canada",
+	"dttmstart": 1525064400000,
+	"summaryops": "Perf and frac 1 of 23 stages completed. Frac operations on adjacent wells. Monitor SICP via real time surface recorders.  ",
+	"costtotalcalc": 714585,
+	"afetotalcalc": 5065000
+}]

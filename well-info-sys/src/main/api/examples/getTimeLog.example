@@ -1,0 +1,26 @@
+[{
+    "problemdurationhours": null,
+    "depthstart": null,
+    "unschedtyp": "P",
+    "idrecparent": "1620B7A8181B44F38059CB2FEA101949",
+    "dttmendcalc": 1556413200000,
+    "durationhours": 6.5,
+    "idrec": "D82B8B3157A54D9987661E970D2F7DA7",
+    "dttmstartcalc": 1556389800000,
+    "idwell": "99EE7BA132CE48BB8A567E7FE5918748",
+    "name": "Standby",
+    "operation": "Standby to Frac Stage # 13 of 27."
+  },
+  {
+    "problemdurationhours": 0.75,
+    "depthstart": null,
+    "unschedtyp": "N",
+    "idrecparent": "1620B7A8181B44F38059CB2FEA101949",
+    "dttmendcalc": 1556423100000,
+    "durationhours": 0.75,
+    "idrec": "DF21949B492B4D7DA7038B92A791655D",
+    "dttmstartcalc": 1556420400000,
+    "idwell": "99EE7BA132CE48BB8A567E7FE5918748",
+    "name": "NPT",
+    "operation": "S/D Frac due to Blender Screws not functioning properly. FTSI Repaired Screws"
+  }]

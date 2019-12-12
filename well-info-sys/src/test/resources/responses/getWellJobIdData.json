@@ -1,0 +1,21 @@
+[{
+	"durationproblemtimecalc": "1.3125",
+	"durationpersonnelotcalc": "null",
+	"afetotalnormcalc": "1559000.0",
+	"syscreatedate": "2014-05-08 15:17:17.667",
+	"durationpersonnelregcalc": "201.43750000000017",
+	"durationtechlimittotalcalc": "0.0",
+	"depthperratiodurationcalc": "12395.097113924041",
+	"dttmstartplan": "null",
+	"summarygeo": "null",
+	"usertxt2": "null",
+	"usertxt4": "null",
+	"jobidc": "null",
+	"projectrefnumbercalc": "9",
+	"variancefieldcalc": "-67006.05000000028",
+	"afepertargetdepthcalc": "410.35888602866953",
+	"safetyincnocalc": "0.0",
+	"varianceafefinalcalc": "1559000.0",
+	"estcostnormsavecalc": "null",
+	"mudcostcalc": "59706.86000000001"
+}]

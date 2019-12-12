@@ -1,0 +1,43 @@
+[{
+	"Job Day": 23.0,
+	"Cum Daily Cost": 1136320.83,
+	"Daily Cost": 16855.0,
+	"Report Number": 33.0,
+	"Date": "2018-06-17",
+	"idwell": "CE65E80041A44EE5A6D28E5B697FEC81"
+}, {
+	"Job Day": 24.0,
+	"Cum Daily Cost": 1157940.83,
+	"Daily Cost": 21620.0,
+	"Report Number": 34.0,
+	"Date": "2018-06-18",
+	"idwell": "CE65E80041A44EE5A6D28E5B697FEC81"
+}, {
+	"Job Day": 25.0,
+	"Cum Daily Cost": 1345575.83,
+	"Daily Cost": 187635.0,
+	"Report Number": 35.0,
+	"Date": "2018-06-19",
+	"idwell": "CE65E80041A44EE5A6D28E5B697FEC81"
+}, {
+	"Job Day": 26.0,
+	"Cum Daily Cost": 1356320.83,
+	"Daily Cost": 10745.0,
+	"Report Number": 36.0,
+	"Date": "2018-06-20",
+	"idwell": "CE65E80041A44EE5A6D28E5B697FEC81"
+}, {
+	"Job Day": 27.0,
+	"Cum Daily Cost": 1379953.33,
+	"Daily Cost": 23632.5,
+	"Report Number": 37.0,
+	"Date": "2018-06-21",
+	"idwell": "CE65E80041A44EE5A6D28E5B697FEC81"
+}, {
+	"Job Day": 28.0,
+	"Cum Daily Cost": 1403553.33,
+	"Daily Cost": 23600.0,
+	"Report Number": 38.0,
+	"Date": "2018-06-22",
+	"idwell": "CE65E80041A44EE5A6D28E5B697FEC81"
+}]

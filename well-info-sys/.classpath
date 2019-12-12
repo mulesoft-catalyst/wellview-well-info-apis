@@ -1,0 +1,68 @@
+<classpath>
+  <classpathentry kind="src" path="src/main/api" excluding="**/*.java"/>
+  <classpathentry kind="src" path="src/main/app" excluding="**/*.java"/>
+  <classpathentry kind="src" path="src/main/java"/>
+  <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
+  <classpathentry kind="src" path="src/test/java" output="target/test-classes"/>
+  <classpathentry kind="src" path="src/test/munit" output="target/test-classes" excluding="**/*.java"/>
+  <classpathentry kind="src" path="src/test/resources" output="target/test-classes" excluding="**/*.java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="con" path="MULE_RUNTIME"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcpg-jdk15on/1.58/bcpg-jdk15on-1.58.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcpg-jdk16/1.46/bcpg-jdk16-1.46.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcprov-ext-jdk15on/1.58/bcprov-ext-jdk15on-1.58.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcprov-jdk15on/1.47/bcprov-jdk15on-1.47.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcprov-jdk16/1.46/bcprov-jdk16-1.46.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/murphyoilcorp/common-assets/0.2/common-assets-0.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-csv/1.4/commons-csv-1.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-dbcp2/2.1.1/commons-dbcp2-2.1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.0/commons-lang3-3.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-net/commons-net/3.6/commons-net-3.6.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-pool2/2.4.2/commons-pool2-2.4.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-text/1.3/commons-text-1.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/jcraft/jsch/0.1.42/jsch-0.1.42.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mockito/mockito-all/1.8.2/mockito-all-1.8.2.jar">
+    <attributes>
+      <attribute value="test" name="org.mule.tooling.scope"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/microsoft/sqlserver/mssql-jdbc/6.2.1.jre8/mssql-jdbc-6.2.1.jre8.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/mulesoft/modules/mule-interceptor-module/3.8.5/mule-interceptor-module-3.8.5.jar">
+    <attributes>
+      <attribute value="test" name="org.mule.tooling.scope"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/mulesoft/security/mule-module-security-encryption/1.5.2/mule-module-security-encryption-1.5.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/mulesoft/security/mule-module-security-property-placeholder/1.4.0/mule-module-security-property-placeholder-1.4.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/mulesoft/munit/mule-munit-support/3.8.5/mule-munit-support-3.8.5.jar">
+    <attributes>
+      <attribute value="test" name="org.mule.tooling.scope"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/mulesoft/munit/munit-assert/1.3.6/munit-assert-1.3.6.jar">
+    <attributes>
+      <attribute value="test" name="org.mule.tooling.scope"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/mulesoft/munit/munit-common/1.3.6/munit-common-1.3.6.jar">
+    <attributes>
+      <attribute value="test" name="org.mule.tooling.scope"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/mulesoft/munit/munit-mock/1.3.6/munit-mock-1.3.6.jar">
+    <attributes>
+      <attribute value="test" name="org.mule.tooling.scope"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/mulesoft/munit/munit-runner/1.3.6/munit-runner-1.3.6.jar">
+    <attributes>
+      <attribute value="test" name="org.mule.tooling.scope"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/mulesoft/security/security-api/1.4.0/security-api-1.4.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/validation/validation-api/1.0.0.GA/validation-api-1.0.0.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/xml-security/xmlsec/1.3.0/xmlsec-1.3.0.jar"/>
+</classpath>

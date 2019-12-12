@@ -1,0 +1,2151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:json="http://www.mulesoft.org/schema/mule/json"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+<flow name="well-info-sys-getWell-wellId-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="wellId" value="#[message.inboundProperties.'http.uri.params'.wellId]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Wellview Database">
+            <db:parameterized-query><![CDATA[select
+	idwell,
+	agent,
+	area,
+	basin,
+	basincode,
+	com,
+	country,
+	county,
+	currentprimaryfluiddescalc,
+	currentwellstatus1,
+	currentwellstatus1calc,
+	currentwellstatus2,
+	currentwellstatus2calc,
+	currentwelltyp1calc,
+	currentwelltyp2calc,
+	directionstowell,
+	displaceunwrapcalc,
+	district,
+	division,
+	divisioncode,
+	dttmabandon,
+	dttmfirstprod,
+	dttmrr,
+	dttmspud,
+	dttmstatuscalc,
+	dttmwellclass,
+	dttmwelllic,
+	elvcasflange,
+	elvground,
+	elvlat,
+	elvmudline,
+	elvorigkb,
+	elvtubhead,
+	environmentsensitive,
+	ewdist,
+	ewflag,
+	fieldcode,
+	fieldname,
+	fieldoffice,
+	fieldofficecode,
+	govauthority,
+	hih2s,
+	hisitp,
+	idrecelvhistory,
+	idrecelvhistorytk,
+	idrecproblemcalc,
+	idrecproblemcalctk,
+	idrecprodsettingcalc,
+	idrecprodsettingcalctk,
+	kbtocascalc,
+	kbtogrdcalc,
+	kbtomudcalc,
+	kbtoothercalc,
+	kbtotubcalc,
+	latitude,
+	latlongdatum,
+	latlongsource,
+	lease,
+	leasecode,
+	legalsurveyloc,
+	legalsurveysubtyp,
+	legalsurveytyp,
+	localtimezone,
+	locationnote,
+	locationref,
+	locationsensitive,
+	locationtyp,
+	longitude,
+	nsdist,
+	nsflag,
+	operated,
+	operator,
+	operatorcode,
+	othertocascalc,
+	othertogrdcalc,
+	othertomudcalc,
+	othertotubcalc,
+	padcode,
+	padname,
+	pbtdallcalc,
+	platform,
+	primaryfluiddes,
+	problemflag,
+	riskclass,
+	slot,
+	stateprov,
+	surfacerights,
+	tdallcalc,
+	tdcalc,
+	tdtvdallcalc,
+	towndist,
+	townflag,
+	townname,
+	townstateprov,
+	userboolean1,
+	userboolean2,
+	userboolean3,
+	userboolean4,
+	userboolean5,
+	userdttm1,
+	userdttm2,
+	userdttm3,
+	userdttm4,
+	userdttm5,
+	usernum1,
+	usernum2,
+	usernum3,
+	usernum4,
+	usernum5,
+	usernum6,
+	usertxt1,
+	usertxt10,
+	usertxt2,
+	usertxt3,
+	usertxt4,
+	usertxt5,
+	usertxt6,
+	usertxt7,
+	usertxt8,
+	usertxt9,
+	utmgridzone,
+	utmsource,
+	utmx,
+	utmy,
+	waterdepth,
+	waterdepthref,
+	wellborenocalc,
+	wellclass,
+	wellconfig,
+	wellida,
+	wellidb,
+	wellidc,
+	wellidd,
+	wellide,
+	welllicensee,
+	welllicenseno,
+	wellname,
+	welltyp1,
+	welltyp2,
+	syslockmeui,
+	syslockchildrenui,
+	syslockme,
+	syslockchildren,
+	syslockdate,
+	sysmoddate,
+	sysmoduser,
+	syscreatedate,
+	syscreateuser,
+	systag,
+	sysmoddatedb,
+	sysmoduserdb,
+	syssecuritytyp,
+	syslockdatemaster
+from wvt_wvwellheader
+where idwell = #[flowVars.wellId]
+order by idwell]]></db:parameterized-query>
+        </db:select>
+        <json:object-to-json-transformer returnClass="java.lang.String" doc:name="Object to JSON" />
+        <set-payload value="#[payload]" doc:name="Set Payload" mimeType="application/json"/>
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-sys-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    <flow name="well-info-sys-getWell-wellId-job-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="wellId" value="#[message.inboundProperties.'http.uri.params'.wellId]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Wellview Database">
+            <db:parameterized-query><![CDATA[select 
+	idwell,
+	idrec,
+	afeamtcalc,
+	afeamtnormcalc,
+	afenumbercalc,
+	afecosttypcalc,
+	afenumbersuppcalc,
+	afeperdurmlcalc,
+	afeperdurmlnormcalc,
+	afepertargetdepthcalc,
+	afepertargetdepthnormcalc,
+	afesupamtcalc,
+	afesupamtnormcalc,
+	afetotalcalc,
+	afetotalnormcalc,
+	bhadrillruncalc,
+	bhatotalruncalc,
+	bitrevscalc,
+	chartofaccounts,
+	client,
+	complexityindex,
+	costfinalactual,
+	costforecastcalc,
+	costmaxtotalcalc,
+	costmintotalcalc,
+	costmltotalcalc,
+	costmlnoexcludecalc,
+	costnormforecastcalc,
+	costnormperdepthcalc,
+	costnormtotalcalc,
+	costperdepthcalc,
+	costperdepthplanmlcalc,
+	costnormperdepthplanmlcalc,
+	costtechlimittotalcalc,
+	costpertldurcalc,
+	costpertldurnormcalc,
+	costtotalcalc,
+	currencycode,
+	currencyexchangerate,
+	depthdrilledcalc,
+	depthdrilledperbhacalc,
+	depthperdurplanmlcalc,
+	depthperratiodurationcalc,
+	depthrotatingcalc,
+	depthslidingcalc,
+	dttmend,
+	dttmendplanmaxcalc,
+	dttmendplanmincalc,
+	dttmendplanmlcalc,
+	dttmendplantechlimitcalc,
+	dttmspud,
+	dttmstart,
+	dttmstartplan,
+	dttmtotaldepthcalc,
+	durationmaxtotalcalc,
+	durationmintotalcalc,
+	durationmltotalcalc,
+	durationnoproblemtimecalc,
+	durationpersonnelotcalc,
+	durationpersonnelregcalc,
+	durationpersonneltotcalc,
+	durationproblemtimecalc,
+	durationspudtoplanmlcalc,
+	durationspudtoplanmaxcalc,
+	durationspudtoplanmincalc,
+	durationspudtoplantechlimcalc,
+	durationspudtimelogcalc,
+	durationspudtotdcalc,
+	durationtechlimittotalcalc,
+	durationtimelogtotalcalc,
+	durmltotalnoplanchangecalc,
+	durmlnoexcludecalc,
+	estcostnormsavecalc,
+	estcostsavecalc,
+	estproblemcostcalc,
+	estproblemcostnormcalc,
+	estproblemtimecalc,
+	esttimesavecalc,
+	finalinvoicetotalcalc,
+	finalinvoicetotalnormcalc,
+	hazardidnorptcalc,
+	idreclastrigcalc,
+	idreclastrigcalctk,
+	idrectub,
+	idrectubtk,
+	idrecwellbore,
+	idrecwellboretk,
+	idrecwellborecalc,
+	idrecwellborecalctk,
+	jobida,
+	jobidb,
+	jobidc,
+	jobsubtyp,
+	jobsupplycostcalc,
+	jobsupplycostnormcalc,
+	jobtyp,
+	mudcostcalc,
+	mudcostnormcalc,
+	muddensitymaxcalc,
+	mudtypcalc,
+	objective,
+	objectivegeo,
+	pctproblemtimecalc,
+	percenttmrotatingcalc,
+	percenttmslidingcalc,
+	programmuddensitymaxcalc,
+	programmuddensitymincalc,
+	projectrefnumbercalc,
+	ratetargetcond,
+	rateactualcond,
+	ratetargetgas,
+	rateactualgas,
+	ratetargetoil,
+	rateactualoil,
+	ratetargetwater,
+	rateactualwater,
+	ratiodurtimelogrefhourscalc,
+	reportnocalc,
+	responsiblegrp1,
+	responsiblegrp2,
+	responsiblegrp3,
+	resulttechnical,
+	ropavgfromspudcalc,
+	ropcalc,
+	roprotatingcalc,
+	ropslidingcalc,
+	ropspudtimelogcalc,
+	roptimelogcalc,
+	safetyincnocalc,
+	safetyincreportnocalc,
+	status1,
+	status2,
+	summary,
+	summarygeo,
+	targetdepth,
+	targetdepthtvdcalc,
+	targetform,
+	tmcirccalc,
+	tmdrillcalc,
+	tmothercalc,
+	tmrotatingcalc,
+	tmslidingcalc,
+	tmtripcalc,
+	totaldepthcalc,
+	totaldepthtvdcalc,
+	tdtomudcalc,
+	userboolean1,
+	userboolean2,
+	usernum1,
+	usernum2,
+	usernum3,
+	usernum4,
+	usernum5,
+	usertxt1,
+	usertxt2,
+	usertxt3,
+	usertxt4,
+	usertxt5,
+	varianceafefinalcalc,
+	variancefieldcalc,
+	variancefieldfinalcalc,
+	variancefinalcalc,
+	variancenormafefinalcalc,
+	variancenormfieldcalc,
+	variancenormfieldfinalcalc,
+	variancenormfinalcalc,
+	wvtyp,
+	syslockmeui,
+	syslockchildrenui,
+	syslockme,
+	syslockchildren,
+	syslockdate,
+	sysmoddate,
+	sysmoduser,
+	syscreatedate,
+	syscreateuser,
+	systag
+from wvt_wvjob
+where idwell = #[flowVars.wellId]]]></db:parameterized-query>
+        </db:select>
+        <json:object-to-json-transformer returnClass="java.lang.String" doc:name="Object to JSON" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-sys-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-sys-getWell-wellId-job-report-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="wellId" value="#[message.inboundProperties.'http.uri.params'.wellId]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Wellview Database">
+            <db:parameterized-query><![CDATA[select
+	bitrevscalc,
+	condhole,
+	condlease,
+	condroad,
+	condtemp,
+	condwave,
+	condweather,
+	condwind,
+	contactcalc,
+	costjobsupplyamtcalc,
+	costjobsupplyamtnormcalc,
+	costjobsupplyamttodatecalc,
+	costjobsupplyamttodtncalc,
+	costmudaddcalc,
+	costmudaddnormcalc,
+	costmudaddtodatecalc,
+	costmudaddtodatenormcalc,
+	costperdepthcalc,
+	costperdepthcumcalc,
+	costperdepthnormcalc,
+	costperdepthvarcalc,
+	costpertldurcalc,
+	costpertldurnormcalc,
+	costprojectedmljobcalc,
+	costprojectedmlphasecalc,
+	costtodatecalc,
+	costtodatenormcalc,
+	costtotalcalc,
+	costtotalnormcalc,
+	daysfromspudcalc,
+	daysfromspudtorrcalc,
+	depthenddpcalc,
+	depthenddpcumcalc,
+	depthenddpnullcalc,
+	depthnetprogressdpcalc,
+	depthperdurcalc,
+	depthperdurvarcalc,
+	depthprogressdpcalc,
+	depthrotatingcalc,
+	depthslidingcalc,
+	depthstartdpcalc,
+	depthstartdpnullcalc,
+	depthtvdenddpcalc,
+	depthtvdendprojmethod,
+	depthtvdstartdpcalc,
+	dttmend,
+	dttmprojendmljobcalc,
+	dttmprojendmlphasecalc,
+	dttmstart,
+	durationnoprobtimecalc,
+	durationnoprobtimecumcalc,
+	durationpersonnelotcalc,
+	durationpersonnelregcalc,
+	durationpersonneltotcalc,
+	durationproblemtimecalc,
+	durationproblemtimecumcalc,
+	durationsinceltinc,
+	durationsincerptinc,
+	durationtimelogcumspudcalc,
+	durationtimelogtotalcalc,
+	durationtimelogtotcumcalc,
+	durnoprobtimecumdayscalc,
+	durpersonnelotcumcalc,
+	durpersonnelregcumcalc,
+	durpersonneltotcumcalc,
+	durproblemtimecumdayscalc,
+	durprojectedmljobcalc,
+	durprojectedmlphasecalc,
+	gasbackgroundavg,
+	gasbackgroundmax,
+	gasconnectionavg,
+	gasconnectionmax,
+	gasdrillavg,
+	gasdrillmax,
+	gastripavg,
+	gastripmax,
+	h2smax,
+	hazardidnorptcalc,
+	hazardidnorptcumcalc,
+	headcountcalc,
+	idrec,
+	idrecjobprogramphasecalc,
+	idrecjobprogramphasecalctk,
+	idreclastcascalc,
+	idreclastcascalctk,
+	idreclastrigcalc,
+	idreclastrigcalctk,
+	idrecnextcas,
+	idrecnextcastk,
+	idrecparent,
+	idrecwellborecalc,
+	idrecwellborecalctk,
+	idwell,
+	lastmuddensitycalc,
+	pctproblemtimecalc,
+	pctproblemtimecumcalc,
+	percentcompletemljobcalc,
+	percentcompletemlphasecalc,
+	percenttmrotatingcalc,
+	percenttmslidingcalc,
+	plannextrptops,
+	ratiodurprojmlplancalc,
+	remarks,
+	reportdaycalc,
+	reportnocalc,
+	rigdayscalc,
+	rigdayscumcalc,
+	rigscalc,
+	rigtime,
+	rigtimecumcalc,
+	ropcalc,
+	roprotatingcalc,
+	ropslidingcalc,
+	rpttmactops,
+	safetyincnocalc,
+	safetyincnocumcalc,
+	safetyincratecalc,
+	safetyincreportnocalc,
+	safetyincreportnocumcalc,
+	safetyincreportratecalc,
+	statusend,
+	summaryops,
+	syscreatedate,
+	syscreateuser,
+	syslockchildren,
+	syslockchildrenui,
+	syslockdate,
+	syslockme,
+	syslockmeui,
+	sysmoddate,
+	sysmoduser,
+	systag,
+	timeaheadmljobcalc,
+	timeaheadmlphasecalc,
+	timelogcode1calc,
+	timelogcode2calc,
+	timelogcode3calc,
+	timelogcode4calc,
+	tmcirccalc,
+	tmcirccumcalc,
+	tmdrillcalc,
+	tmdrillcumcalc,
+	tmothercalc,
+	tmothercumcalc,
+	tmrotatingcalc,
+	tmslidingcalc,
+	tmtripcalc,
+	tmtripcumcalc,
+	userboolean1,
+	userboolean2,
+	usernum1,
+	usernum2,
+	usernum3,
+	usernum4,
+	usernum5,
+	usertxt1,
+	usertxt2,
+	usertxt3,
+	usertxt4,
+	usertxt5,
+	volbittoshoecalc,
+	volcastoptorisertopcalc,
+	volholecalc,
+	volholevarcalc,
+	volmudactivecalc,
+	volmudactivevarcalc,
+	volmudaddedcalc,
+	volmudaddedcumcalc,
+	volmudaddedlossvarcalc,
+	volmudaddedlossvarcumcalc,
+	volmudbalancecalc,
+	volmudlosscalc,
+	volmudlosscumcalc,
+	volmudtankcalc,
+	volpumptobitcalc,
+	volshoetocastopcalc,
+	weightmetalrecovtotalcalc
+from wvt_wvjobreport
+where idwell = #[flowVars.wellId]]]></db:parameterized-query>
+        </db:select>
+        <json:object-to-json-transformer returnClass="java.lang.String" doc:name="Object to JSON" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-sys-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-sys-getWell-wellId-job-jobId-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="wellId" value="#[message.inboundProperties.'http.uri.params'.wellId]" />
+            <add-message-property key="jobId" value="#[message.inboundProperties.'http.uri.params'.jobId]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Wellview Database">
+            <db:parameterized-query><![CDATA[select
+	idwell,
+	idrec,
+	afeamtcalc,
+	afeamtnormcalc,
+	afenumbercalc,
+	afecosttypcalc,
+	afenumbersuppcalc,
+	afeperdurmlcalc,
+	afeperdurmlnormcalc,
+	afepertargetdepthcalc,
+	afepertargetdepthnormcalc,
+	afesupamtcalc,
+	afesupamtnormcalc,
+	afetotalcalc,
+	afetotalnormcalc,
+	bhadrillruncalc,
+	bhatotalruncalc,
+	bitrevscalc,
+	chartofaccounts,
+	client,
+	complexityindex,
+	costfinalactual,
+	costforecastcalc,
+	costmaxtotalcalc,
+	costmintotalcalc,
+	costmltotalcalc,
+	costmlnoexcludecalc,
+	costnormforecastcalc,
+	costnormperdepthcalc,
+	costnormtotalcalc,
+	costperdepthcalc,
+	costperdepthplanmlcalc,
+	costnormperdepthplanmlcalc,
+	costtechlimittotalcalc,
+	costpertldurcalc,
+	costpertldurnormcalc,
+	costtotalcalc,
+	currencycode,
+	currencyexchangerate,
+	depthdrilledcalc,
+	depthdrilledperbhacalc,
+	depthperdurplanmlcalc,
+	depthperratiodurationcalc,
+	depthrotatingcalc,
+	depthslidingcalc,
+	dttmend,
+	dttmendplanmaxcalc,
+	dttmendplanmincalc,
+	dttmendplanmlcalc,
+	dttmendplantechlimitcalc,
+	dttmspud,
+	dttmstart,
+	dttmstartplan,
+	dttmtotaldepthcalc,
+	durationmaxtotalcalc,
+	durationmintotalcalc,
+	durationmltotalcalc,
+	durationnoproblemtimecalc,
+	durationpersonnelotcalc,
+	durationpersonnelregcalc,
+	durationpersonneltotcalc,
+	durationproblemtimecalc,
+	durationspudtoplanmlcalc,
+	durationspudtoplanmaxcalc,
+	durationspudtoplanmincalc,
+	durationspudtoplantechlimcalc,
+	durationspudtimelogcalc,
+	durationspudtotdcalc,
+	durationtechlimittotalcalc,
+	durationtimelogtotalcalc,
+	durmltotalnoplanchangecalc,
+	durmlnoexcludecalc,
+	estcostnormsavecalc,
+	estcostsavecalc,
+	estproblemcostcalc,
+	estproblemcostnormcalc,
+	estproblemtimecalc,
+	esttimesavecalc,
+	finalinvoicetotalcalc,
+	finalinvoicetotalnormcalc,
+	hazardidnorptcalc,
+	idreclastrigcalc,
+	idreclastrigcalctk,
+	idrectub,
+	idrectubtk,
+	idrecwellbore,
+	idrecwellboretk,
+	idrecwellborecalc,
+	idrecwellborecalctk,
+	jobida,
+	jobidb,
+	jobidc,
+	jobsubtyp,
+	jobsupplycostcalc,
+	jobsupplycostnormcalc,
+	jobtyp,
+	mudcostcalc,
+	mudcostnormcalc,
+	muddensitymaxcalc,
+	mudtypcalc,
+	objective,
+	objectivegeo,
+	pctproblemtimecalc,
+	percenttmrotatingcalc,
+	percenttmslidingcalc,
+	programmuddensitymaxcalc,
+	programmuddensitymincalc,
+	projectrefnumbercalc,
+	ratetargetcond,
+	rateactualcond,
+	ratetargetgas,
+	rateactualgas,
+	ratetargetoil,
+	rateactualoil,
+	ratetargetwater,
+	rateactualwater,
+	ratiodurtimelogrefhourscalc,
+	reportnocalc,
+	responsiblegrp1,
+	responsiblegrp2,
+	responsiblegrp3,
+	resulttechnical,
+	ropavgfromspudcalc,
+	ropcalc,
+	roprotatingcalc,
+	ropslidingcalc,
+	ropspudtimelogcalc,
+	roptimelogcalc,
+	safetyincnocalc,
+	safetyincreportnocalc,
+	status1,
+	status2,
+	summary,
+	summarygeo,
+	targetdepth,
+	targetdepthtvdcalc,
+	targetform,
+	tmcirccalc,
+	tmdrillcalc,
+	tmothercalc,
+	tmrotatingcalc,
+	tmslidingcalc,
+	tmtripcalc,
+	totaldepthcalc,
+	totaldepthtvdcalc,
+	tdtomudcalc,
+	userboolean1,
+	userboolean2,
+	usernum1,
+	usernum2,
+	usernum3,
+	usernum4,
+	usernum5,
+	usertxt1,
+	usertxt2,
+	usertxt3,
+	usertxt4,
+	usertxt5,
+	varianceafefinalcalc,
+	variancefieldcalc,
+	variancefieldfinalcalc,
+	variancefinalcalc,
+	variancenormafefinalcalc,
+	variancenormfieldcalc,
+	variancenormfieldfinalcalc,
+	variancenormfinalcalc,
+	wvtyp,
+	syslockmeui,
+	syslockchildrenui,
+	syslockme,
+	syslockchildren,
+	syslockdate,
+	sysmoddate,
+	sysmoduser,
+	syscreatedate,
+	syscreateuser,
+	systag
+from wvt_wvjob
+where idwell = #[flowVars.wellId]
+and idrec = #[flowVars.jobId]]]></db:parameterized-query>
+        </db:select>
+        <json:object-to-json-transformer returnClass="java.lang.String" doc:name="Object to JSON" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-sys-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-sys-getWell-wellId-job-jobId-report-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="wellId" value="#[message.inboundProperties.'http.uri.params'.wellId]" />
+            <add-message-property key="jobId" value="#[message.inboundProperties.'http.uri.params'.jobId]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Wellview Database">
+            <db:parameterized-query><![CDATA[select
+	bitrevscalc,
+	condhole,
+	condlease,
+	condroad,
+	condtemp,
+	condwave,
+	condweather,
+	condwind,
+	contactcalc,
+	costjobsupplyamtcalc,
+	costjobsupplyamtnormcalc,
+	costjobsupplyamttodatecalc,
+	costjobsupplyamttodtncalc,
+	costmudaddcalc,
+	costmudaddnormcalc,
+	costmudaddtodatecalc,
+	costmudaddtodatenormcalc,
+	costperdepthcalc,
+	costperdepthcumcalc,
+	costperdepthnormcalc,
+	costperdepthvarcalc,
+	costpertldurcalc,
+	costpertldurnormcalc,
+	costprojectedmljobcalc,
+	costprojectedmlphasecalc,
+	costtodatecalc,
+	costtodatenormcalc,
+	costtotalcalc,
+	costtotalnormcalc,
+	daysfromspudcalc,
+	daysfromspudtorrcalc,
+	depthenddpcalc,
+	depthenddpcumcalc,
+	depthenddpnullcalc,
+	depthnetprogressdpcalc,
+	depthperdurcalc,
+	depthperdurvarcalc,
+	depthprogressdpcalc,
+	depthrotatingcalc,
+	depthslidingcalc,
+	depthstartdpcalc,
+	depthstartdpnullcalc,
+	depthtvdenddpcalc,
+	depthtvdendprojmethod,
+	depthtvdstartdpcalc,
+	dttmend,
+	dttmprojendmljobcalc,
+	dttmprojendmlphasecalc,
+	dttmstart,
+	durationnoprobtimecalc,
+	durationnoprobtimecumcalc,
+	durationpersonnelotcalc,
+	durationpersonnelregcalc,
+	durationpersonneltotcalc,
+	durationproblemtimecalc,
+	durationproblemtimecumcalc,
+	durationsinceltinc,
+	durationsincerptinc,
+	durationtimelogcumspudcalc,
+	durationtimelogtotalcalc,
+	durationtimelogtotcumcalc,
+	durnoprobtimecumdayscalc,
+	durpersonnelotcumcalc,
+	durpersonnelregcumcalc,
+	durpersonneltotcumcalc,
+	durproblemtimecumdayscalc,
+	durprojectedmljobcalc,
+	durprojectedmlphasecalc,
+	gasbackgroundavg,
+	gasbackgroundmax,
+	gasconnectionavg,
+	gasconnectionmax,
+	gasdrillavg,
+	gasdrillmax,
+	gastripavg,
+	gastripmax,
+	h2smax,
+	hazardidnorptcalc,
+	hazardidnorptcumcalc,
+	headcountcalc,
+	idrec,
+	idrecjobprogramphasecalc,
+	idrecjobprogramphasecalctk,
+	idreclastcascalc,
+	idreclastcascalctk,
+	idreclastrigcalc,
+	idreclastrigcalctk,
+	idrecnextcas,
+	idrecnextcastk,
+	idrecparent,
+	idrecwellborecalc,
+	idrecwellborecalctk,
+	idwell,
+	lastmuddensitycalc,
+	pctproblemtimecalc,
+	pctproblemtimecumcalc,
+	percentcompletemljobcalc,
+	percentcompletemlphasecalc,
+	percenttmrotatingcalc,
+	percenttmslidingcalc,
+	plannextrptops,
+	ratiodurprojmlplancalc,
+	remarks,
+	reportdaycalc,
+	reportnocalc,
+	rigdayscalc,
+	rigdayscumcalc,
+	rigscalc,
+	rigtime,
+	rigtimecumcalc,
+	ropcalc,
+	roprotatingcalc,
+	ropslidingcalc,
+	rpttmactops,
+	safetyincnocalc,
+	safetyincnocumcalc,
+	safetyincratecalc,
+	safetyincreportnocalc,
+	safetyincreportnocumcalc,
+	safetyincreportratecalc,
+	statusend,
+	summaryops,
+	syscreatedate,
+	syscreateuser,
+	syslockchildren,
+	syslockchildrenui,
+	syslockdate,
+	syslockme,
+	syslockmeui,
+	sysmoddate,
+	sysmoduser,
+	systag,
+	timeaheadmljobcalc,
+	timeaheadmlphasecalc,
+	timelogcode1calc,
+	timelogcode2calc,
+	timelogcode3calc,
+	timelogcode4calc,
+	tmcirccalc,
+	tmcirccumcalc,
+	tmdrillcalc,
+	tmdrillcumcalc,
+	tmothercalc,
+	tmothercumcalc,
+	tmrotatingcalc,
+	tmslidingcalc,
+	tmtripcalc,
+	tmtripcumcalc,
+	userboolean1,
+	userboolean2,
+	usernum1,
+	usernum2,
+	usernum3,
+	usernum4,
+	usernum5,
+	usertxt1,
+	usertxt2,
+	usertxt3,
+	usertxt4,
+	usertxt5,
+	volbittoshoecalc,
+	volcastoptorisertopcalc,
+	volholecalc,
+	volholevarcalc,
+	volmudactivecalc,
+	volmudactivevarcalc,
+	volmudaddedcalc,
+	volmudaddedcumcalc,
+	volmudaddedlossvarcalc,
+	volmudaddedlossvarcumcalc,
+	volmudbalancecalc,
+	volmudlosscalc,
+	volmudlosscumcalc,
+	volmudtankcalc,
+	volpumptobitcalc,
+	volshoetocastopcalc,
+	weightmetalrecovtotalcalc
+from wvt_wvjobreport
+where idwell = #[flowVars.wellId]
+and idrecparent = #[flowVars.jobId]]]></db:parameterized-query>
+        </db:select>
+        <json:object-to-json-transformer returnClass="java.lang.String" doc:name="Object to JSON" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-sys-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-sys-getWell-wellId-job-jobId-rig-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="wellId" value="#[message.inboundProperties.'http.uri.params'.wellId]" />
+            <add-message-property key="jobId" value="#[message.inboundProperties.'http.uri.params'.jobId]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Wellview Database">
+            <db:parameterized-query><![CDATA[select
+	anchorlinetyp,
+	anchormaxtension,
+	anchorno,
+	anchortyp,
+	com,
+	contractor,
+	contractorparent,
+	contracttyp,
+	depthmax,
+	derricktyp,
+	drawworkmake,
+	drawworkmodel,
+	drawworktyp,
+	dttmend,
+	dttmstart,
+	heightmastclearance,
+	heightsubclear,
+	hookloadmax,
+	idrec,
+	idrecjobcontactcontractor,
+	idrecjobcontactcontractortk,
+	idrecparent,
+	idwell,
+	inventoryno,
+	lengthchokeline,
+	lengthkillline,
+	maxvariableload,
+	postyp,
+	power,
+	powertyp,
+	proposed,
+	purpose,
+	refheight,
+	rigno,
+	rigrateref,
+	rotarysystem,
+	setbackcapacity,
+	slipjtextmax,
+	syscreatedate,
+	syscreateuser,
+	syslockchildren,
+	syslockchildrenui,
+	syslockdate,
+	syslockme,
+	syslockmeui,
+	sysmoddate,
+	sysmoduser,
+	systag,
+	szidchokeline,
+	szidkillline,
+	torquemax,
+	transportloads,
+	typ1,
+	typ2,
+	volchokelinecalc,
+	volkilllinecalc,
+	volsurfline,
+	waterdepthmax,
+	weightblock
+from wvt_wvjobrig
+where idwell = #[flowVars.wellId]
+and idrecparent = #[flowVars.jobId]]]></db:parameterized-query>
+        </db:select>
+        <json:object-to-json-transformer returnClass="java.lang.String" doc:name="Object to JSON" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="wellinfo-sys-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-sys-getWell-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="count" value="#[message.inboundProperties.'http.query.params'.count]" />
+            <add-message-property key="startIndex" value="#[message.inboundProperties.'http.query.params'.startIndex]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Wellview DB">
+            <db:parameterized-query><![CDATA[select distinct
+	idwell,
+	agent,
+	area,
+	basin,
+	basincode,
+	com,
+	country,
+	county,
+	currentprimaryfluiddescalc,
+	currentwellstatus1,
+	currentwellstatus1calc,
+	currentwellstatus2,
+	currentwellstatus2calc,
+	currentwelltyp1calc,
+	currentwelltyp2calc,
+	directionstowell,
+	displaceunwrapcalc,
+	district,
+	division,
+	divisioncode,
+	dttmabandon,
+	dttmfirstprod,
+	dttmrr,
+	dttmspud,
+	dttmstatuscalc,
+	dttmwellclass,
+	dttmwelllic,
+	elvcasflange,
+	elvground,
+	elvlat,
+	elvmudline,
+	elvorigkb,
+	elvtubhead,
+	environmentsensitive,
+	ewdist,
+	ewflag,
+	fieldcode,
+	fieldname,
+	fieldoffice,
+	fieldofficecode,
+	govauthority,
+	hih2s,
+	hisitp,
+	idrecelvhistory,
+	idrecelvhistorytk,
+	idrecproblemcalc,
+	idrecproblemcalctk,
+	idrecprodsettingcalc,
+	idrecprodsettingcalctk,
+	kbtocascalc,
+	kbtogrdcalc,
+	kbtomudcalc,
+	kbtoothercalc,
+	kbtotubcalc,
+	latitude,
+	latlongdatum,
+	latlongsource,
+	lease,
+	leasecode,
+	legalsurveyloc,
+	legalsurveysubtyp,
+	legalsurveytyp,
+	localtimezone,
+	locationnote,
+	locationref,
+	locationsensitive,
+	locationtyp,
+	longitude,
+	nsdist,
+	nsflag,
+	operated,
+	operator,
+	operatorcode,
+	othertocascalc,
+	othertogrdcalc,
+	othertomudcalc,
+	othertotubcalc,
+	padcode,
+	padname,
+	pbtdallcalc,
+	platform,
+	primaryfluiddes,
+	problemflag,
+	riskclass,
+	slot,
+	stateprov,
+	surfacerights,
+	tdallcalc,
+	tdcalc,
+	tdtvdallcalc,
+	towndist,
+	townflag,
+	townname,
+	townstateprov,
+	userboolean1,
+	userboolean2,
+	userboolean3,
+	userboolean4,
+	userboolean5,
+	userdttm1,
+	userdttm2,
+	userdttm3,
+	userdttm4,
+	userdttm5,
+	usernum1,
+	usernum2,
+	usernum3,
+	usernum4,
+	usernum5,
+	usernum6,
+	usertxt1,
+	usertxt10,
+	usertxt2,
+	usertxt3,
+	usertxt4,
+	usertxt5,
+	usertxt6,
+	usertxt7,
+	usertxt8,
+	usertxt9,
+	utmgridzone,
+	utmsource,
+	utmx,
+	utmy,
+	waterdepth,
+	waterdepthref,
+	wellborenocalc,
+	wellclass,
+	wellconfig,
+	wellida,
+	wellidb,
+	wellidc,
+	wellidd,
+	wellide,
+	welllicensee,
+	welllicenseno,
+	wellname,
+	welltyp1,
+	welltyp2,
+	syslockmeui,
+	syslockchildrenui,
+	syslockme,
+	syslockchildren,
+	syslockdate,
+	sysmoddate,
+	sysmoduser,
+	syscreatedate,
+	syscreateuser,
+	systag,
+	sysmoddatedb,
+	sysmoduserdb,
+	syssecuritytyp,
+	syslockdatemaster
+from wvt_wvwellheader
+order by idwell
+offset #[flowVars.startIndex] rows
+fetch next #[flowVars.count] rows only]]></db:parameterized-query>
+        </db:select>
+        <json:object-to-json-transformer returnClass="java.lang.String" doc:name="Object to JSON" />
+        <set-payload value="#[payload]" mimeType="application/json" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-sys-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-sys-getWell-country-countryName-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="count" value="#[message.inboundProperties.'http.query.params'.count]" />
+            <add-message-property key="countryName" value="#[message.inboundProperties.'http.uri.params'.countryName]" />
+            <add-message-property key="startIndex" value="#[message.inboundProperties.'http.query.params'.startIndex]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Wellview Database">
+            <db:parameterized-query><![CDATA[select
+	idwell,
+	agent,
+	area,
+	basin,
+	basincode,
+	com,
+	country,
+	county,
+	currentprimaryfluiddescalc,
+	currentwellstatus1,
+	currentwellstatus1calc,
+	currentwellstatus2,
+	currentwellstatus2calc,
+	currentwelltyp1calc,
+	currentwelltyp2calc,
+	directionstowell,
+	displaceunwrapcalc,
+	district,
+	division,
+	divisioncode,
+	dttmabandon,
+	dttmfirstprod,
+	dttmrr,
+	dttmspud,
+	dttmstatuscalc,
+	dttmwellclass,
+	dttmwelllic,
+	elvcasflange,
+	elvground,
+	elvlat,
+	elvmudline,
+	elvorigkb,
+	elvtubhead,
+	environmentsensitive,
+	ewdist,
+	ewflag,
+	fieldcode,
+	fieldname,
+	fieldoffice,
+	fieldofficecode,
+	govauthority,
+	hih2s,
+	hisitp,
+	idrecelvhistory,
+	idrecelvhistorytk,
+	idrecproblemcalc,
+	idrecproblemcalctk,
+	idrecprodsettingcalc,
+	idrecprodsettingcalctk,
+	kbtocascalc,
+	kbtogrdcalc,
+	kbtomudcalc,
+	kbtoothercalc,
+	kbtotubcalc,
+	latitude,
+	latlongdatum,
+	latlongsource,
+	lease,
+	leasecode,
+	legalsurveyloc,
+	legalsurveysubtyp,
+	legalsurveytyp,
+	localtimezone,
+	locationnote,
+	locationref,
+	locationsensitive,
+	locationtyp,
+	longitude,
+	nsdist,
+	nsflag,
+	operated,
+	operator,
+	operatorcode,
+	othertocascalc,
+	othertogrdcalc,
+	othertomudcalc,
+	othertotubcalc,
+	padcode,
+	padname,
+	pbtdallcalc,
+	platform,
+	primaryfluiddes,
+	problemflag,
+	riskclass,
+	slot,
+	stateprov,
+	surfacerights,
+	tdallcalc,
+	tdcalc,
+	tdtvdallcalc,
+	towndist,
+	townflag,
+	townname,
+	townstateprov,
+	userboolean1,
+	userboolean2,
+	userboolean3,
+	userboolean4,
+	userboolean5,
+	userdttm1,
+	userdttm2,
+	userdttm3,
+	userdttm4,
+	userdttm5,
+	usernum1,
+	usernum2,
+	usernum3,
+	usernum4,
+	usernum5,
+	usernum6,
+	usertxt1,
+	usertxt10,
+	usertxt2,
+	usertxt3,
+	usertxt4,
+	usertxt5,
+	usertxt6,
+	usertxt7,
+	usertxt8,
+	usertxt9,
+	utmgridzone,
+	utmsource,
+	utmx,
+	utmy,
+	waterdepth,
+	waterdepthref,
+	wellborenocalc,
+	wellclass,
+	wellconfig,
+	wellida,
+	wellidb,
+	wellidc,
+	wellidd,
+	wellide,
+	welllicensee,
+	welllicenseno,
+	wellname,
+	welltyp1,
+	welltyp2,
+	syslockmeui,
+	syslockchildrenui,
+	syslockme,
+	syslockchildren,
+	syslockdate,
+	sysmoddate,
+	sysmoduser,
+	syscreatedate,
+	syscreateuser,
+	systag,
+	sysmoddatedb,
+	sysmoduserdb,
+	syssecuritytyp,
+	syslockdatemaster
+from wvt_wvwellheader
+where country = #[flowVars.countryName]
+order by idwell
+offset #[flowVars.startIndex] rows
+fetch next #[flowVars.count] rows only]]></db:parameterized-query>
+        </db:select>
+        <json:object-to-json-transformer returnClass="java.lang.String" doc:name="Object to JSON" />
+        <set-payload value="#[payload]" mimeType="application/json" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-sys-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-sys-getWell-district-districtName-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="count" value="#[message.inboundProperties.'http.query.params'.count]" />
+            <add-message-property key="startIndex" value="#[message.inboundProperties.'http.query.params'.startIndex]" />
+            <add-message-property key="districtName" value="#[message.inboundProperties.'http.uri.params'.district]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Wellview Database">
+            <db:parameterized-query><![CDATA[select
+	idwell,
+	agent,
+	area,
+	basin,
+	basincode,
+	com,
+	country,
+	county,
+	currentprimaryfluiddescalc,
+	currentwellstatus1,
+	currentwellstatus1calc,
+	currentwellstatus2,
+	currentwellstatus2calc,
+	currentwelltyp1calc,
+	currentwelltyp2calc,
+	directionstowell,
+	displaceunwrapcalc,
+	district,
+	division,
+	divisioncode,
+	dttmabandon,
+	dttmfirstprod,
+	dttmrr,
+	dttmspud,
+	dttmstatuscalc,
+	dttmwellclass,
+	dttmwelllic,
+	elvcasflange,
+	elvground,
+	elvlat,
+	elvmudline,
+	elvorigkb,
+	elvtubhead,
+	environmentsensitive,
+	ewdist,
+	ewflag,
+	fieldcode,
+	fieldname,
+	fieldoffice,
+	fieldofficecode,
+	govauthority,
+	hih2s,
+	hisitp,
+	idrecelvhistory,
+	idrecelvhistorytk,
+	idrecproblemcalc,
+	idrecproblemcalctk,
+	idrecprodsettingcalc,
+	idrecprodsettingcalctk,
+	kbtocascalc,
+	kbtogrdcalc,
+	kbtomudcalc,
+	kbtoothercalc,
+	kbtotubcalc,
+	latitude,
+	latlongdatum,
+	latlongsource,
+	lease,
+	leasecode,
+	legalsurveyloc,
+	legalsurveysubtyp,
+	legalsurveytyp,
+	localtimezone,
+	locationnote,
+	locationref,
+	locationsensitive,
+	locationtyp,
+	longitude,
+	nsdist,
+	nsflag,
+	operated,
+	operator,
+	operatorcode,
+	othertocascalc,
+	othertogrdcalc,
+	othertomudcalc,
+	othertotubcalc,
+	padcode,
+	padname,
+	pbtdallcalc,
+	platform,
+	primaryfluiddes,
+	problemflag,
+	riskclass,
+	slot,
+	stateprov,
+	surfacerights,
+	tdallcalc,
+	tdcalc,
+	tdtvdallcalc,
+	towndist,
+	townflag,
+	townname,
+	townstateprov,
+	userboolean1,
+	userboolean2,
+	userboolean3,
+	userboolean4,
+	userboolean5,
+	userdttm1,
+	userdttm2,
+	userdttm3,
+	userdttm4,
+	userdttm5,
+	usernum1,
+	usernum2,
+	usernum3,
+	usernum4,
+	usernum5,
+	usernum6,
+	usertxt1,
+	usertxt10,
+	usertxt2,
+	usertxt3,
+	usertxt4,
+	usertxt5,
+	usertxt6,
+	usertxt7,
+	usertxt8,
+	usertxt9,
+	utmgridzone,
+	utmsource,
+	utmx,
+	utmy,
+	waterdepth,
+	waterdepthref,
+	wellborenocalc,
+	wellclass,
+	wellconfig,
+	wellida,
+	wellidb,
+	wellidc,
+	wellidd,
+	wellide,
+	welllicensee,
+	welllicenseno,
+	wellname,
+	welltyp1,
+	welltyp2,
+	syslockmeui,
+	syslockchildrenui,
+	syslockme,
+	syslockchildren,
+	syslockdate,
+	sysmoddate,
+	sysmoduser,
+	syscreatedate,
+	syscreateuser,
+	systag,
+	sysmoddatedb,
+	sysmoduserdb,
+	syssecuritytyp,
+	syslockdatemaster
+from wvt_wvwellheader
+where district = #[flowVars.districtName]
+order by idwell
+offset #[flowVars.startIndex] rows
+fetch next #[flowVars.count] rows only]]></db:parameterized-query>
+        </db:select>
+        <json:object-to-json-transformer returnClass="java.lang.String" doc:name="Object to JSON" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-sys-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-sys-getWell-name-wellName-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="wellname" value="#[message.inboundProperties.'http.uri.params'.wellName]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Wellview Database">
+            <db:parameterized-query><![CDATA[select
+	idwell,
+	agent,
+	area,
+	basin,
+	basincode,
+	com,
+	country,
+	county,
+	currentprimaryfluiddescalc,
+	currentwellstatus1,
+	currentwellstatus1calc,
+	currentwellstatus2,
+	currentwellstatus2calc,
+	currentwelltyp1calc,
+	currentwelltyp2calc,
+	directionstowell,
+	displaceunwrapcalc,
+	district,
+	division,
+	divisioncode,
+	dttmabandon,
+	dttmfirstprod,
+	dttmrr,
+	dttmspud,
+	dttmstatuscalc,
+	dttmwellclass,
+	dttmwelllic,
+	elvcasflange,
+	elvground,
+	elvlat,
+	elvmudline,
+	elvorigkb,
+	elvtubhead,
+	environmentsensitive,
+	ewdist,
+	ewflag,
+	fieldcode,
+	fieldname,
+	fieldoffice,
+	fieldofficecode,
+	govauthority,
+	hih2s,
+	hisitp,
+	idrecelvhistory,
+	idrecelvhistorytk,
+	idrecproblemcalc,
+	idrecproblemcalctk,
+	idrecprodsettingcalc,
+	idrecprodsettingcalctk,
+	kbtocascalc,
+	kbtogrdcalc,
+	kbtomudcalc,
+	kbtoothercalc,
+	kbtotubcalc,
+	latitude,
+	latlongdatum,
+	latlongsource,
+	lease,
+	leasecode,
+	legalsurveyloc,
+	legalsurveysubtyp,
+	legalsurveytyp,
+	localtimezone,
+	locationnote,
+	locationref,
+	locationsensitive,
+	locationtyp,
+	longitude,
+	nsdist,
+	nsflag,
+	operated,
+	operator,
+	operatorcode,
+	othertocascalc,
+	othertogrdcalc,
+	othertomudcalc,
+	othertotubcalc,
+	padcode,
+	padname,
+	pbtdallcalc,
+	platform,
+	primaryfluiddes,
+	problemflag,
+	riskclass,
+	slot,
+	stateprov,
+	surfacerights,
+	tdallcalc,
+	tdcalc,
+	tdtvdallcalc,
+	towndist,
+	townflag,
+	townname,
+	townstateprov,
+	userboolean1,
+	userboolean2,
+	userboolean3,
+	userboolean4,
+	userboolean5,
+	userdttm1,
+	userdttm2,
+	userdttm3,
+	userdttm4,
+	userdttm5,
+	usernum1,
+	usernum2,
+	usernum3,
+	usernum4,
+	usernum5,
+	usernum6,
+	usertxt1,
+	usertxt10,
+	usertxt2,
+	usertxt3,
+	usertxt4,
+	usertxt5,
+	usertxt6,
+	usertxt7,
+	usertxt8,
+	usertxt9,
+	utmgridzone,
+	utmsource,
+	utmx,
+	utmy,
+	waterdepth,
+	waterdepthref,
+	wellborenocalc,
+	wellclass,
+	wellconfig,
+	wellida,
+	wellidb,
+	wellidc,
+	wellidd,
+	wellide,
+	welllicensee,
+	welllicenseno,
+	wellname,
+	welltyp1,
+	welltyp2,
+	syslockmeui,
+	syslockchildrenui,
+	syslockme,
+	syslockchildren,
+	syslockdate,
+	sysmoddate,
+	sysmoduser,
+	syscreatedate,
+	syscreateuser,
+	systag,
+	sysmoddatedb,
+	sysmoduserdb,
+	syssecuritytyp,
+	syslockdatemaster
+from wvt_wvwellheader
+where wellname = #[flowVars.wellname]]]></db:parameterized-query>
+        </db:select>
+        <json:object-to-json-transformer returnClass="java.lang.String" doc:name="Object to JSON" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-sys-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-sys-getWell-district-districtName-report-daysBack-jobType-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="districtName" value="#[message.inboundProperties.'http.uri.params'.districtName]" />
+            <add-message-property key="daysBack" value="#[message.inboundProperties.'http.uri.params'.daysBack]" />
+            <add-message-property key="jobType" value="#[message.inboundProperties.'http.uri.params'.jobType]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Database">
+            <db:parameterized-query><![CDATA[SELECT DISTINCT
+	wvwellheader.idwell,
+	wvjob.idrec,
+	wvwellheader.wellname,
+	wvwellheader.district,
+	wvjob.wvtyp,
+	wvwellheader.fieldname,
+	wvjobrig.rigno,
+	wvjob.currencycode,
+	wvjob.afetotalcalc,
+	wvjob.costtotalcalc,
+	wvjobreport.usertxt1,
+	wvjobreport.summaryops,
+	wvjobreport.dttmstart,
+	wvjobreport.dttmend,
+	wvwellheader.dttmspud , wvjobreport.usertxt2 ,
+	wvjobreport.PlanNextRptOps , 
+	wvwellheader.usernum6 ,
+	wvjob.afesupamtcalc ,
+	wvjob.finalinvoicetotalcalc,
+	wvwellheader.operated,
+	wvjob.JobTyp
+	,wvjobreport.IDRecLastCasCalc  
+	,wvcas.des
+	,wvcas.depthbtm 	
+FROM wvwellheader 
+INNER JOIN 
+	wvjob ON wvwellheader.idwell = wvjob.idwell 
+INNER JOIN 
+	wvjobreport ON wvjob.idrec = wvjobreport.idrecparent
+LEFT JOIN
+	wvjobrig ON (wvjob.idrec = wvjobrig.idrecparent
+		AND (wvjobrig.dttmstart = (
+			SELECT MAX(wvjobrig.dttmstart) FROM wvjobrig 
+				WHERE wvjobrig.dttmstart <=Cast(GetDate() AS DATE)
+				AND wvjob.idrec = wvjobrig.idrecparent)))
+LEFT JOIN
+	wvcas ON wvjobreport.idreclastcascalc = wvcas.idrec 
+WHERE Cast(wvjobreport.dttmstart AS Date) >= Cast(GetDate() - Cast(#[flowVars.daysBack] As Int) As Date)
+AND Cast(wvjobreport.dttmend As Date) <= Cast(GetDate() As Date)
+AND wvwellheader.district = #[flowVars.districtName]
+AND wvjob.wvtyp = #[flowVars.jobType]
+ORDER BY wvwellheader.wellname]]></db:parameterized-query>
+        </db:select>
+        <json:object-to-json-transformer returnClass="java.lang.String" doc:name="Object to JSON" />
+        <set-payload value="#[payload]" mimeType="application/json" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-sys-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-sys-getWell-global-report-daysBack-jobType-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <!-- <add-message-property key="districtName" value="#[message.inboundProperties.'http.uri.params'.districtName]" />
+             --><add-message-property key="daysBack" value="#[message.inboundProperties.'http.uri.params'.daysBack]" />
+            <add-message-property key="jobType" value="#[message.inboundProperties.'http.uri.params'.jobType]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <logger message="system layer before DB call" level="INFO" doc:name="Logger" />
+        <logger message="DB call is SELECT DISTINCT wvwellheader.idwell,wvjob.idrec,wvwellheader.wellname,wvwellheader.district,wvjob.wvtyp,wvwellheader.fieldname,wvjobrig.rigno,wvjob.currencycode,wvjob.afetotalcalc,wvjob.costtotalcalc,wvjobreport.usertxt1,wvjobreport.summaryops,wvjobreport.dttmstart,wvjobreport.dttmend FROM wvwellheader INNER JOIN wvjob ON wvwellheader.idwell = wvjob.idwell INNER JOIN wvjobreport ON wvjob.idrec = wvjobreport.idrecparent LEFT JOIN wvjobrig ON (wvjob.idrec = wvjobrig.idrecparent) AND (wvjobrig.dttmstart = (  SELECT MAX(wvjobrig.dttmstart) FROM wvjobrig    WHERE wvjobrig.dttmstart &lt;=Cast(GetDate() AS DATE)   AND wvjob.idrec = wvjobrig.idrecparent)) WHERE Cast(wvjobreport.dttmstart AS Date) &gt;= Cast(GetDate() - Cast(#[flowVars.daysBack] As Int) As Date) AND Cast(wvjobreport.dttmend As Date) &lt;= Cast(GetDate() As Date) AND wvwellheader.district in (${wellview.global}) AND wvjob.wvtyp = #[flowVars.jobType] ORDER BY wvwellheader.wellname" level="INFO" doc:name="Logger" />
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Database International">
+            <db:parameterized-query><![CDATA[SELECT DISTINCT
+	wvwellheader.idwell,
+	wvjob.idrec,
+	wvwellheader.wellname,
+	wvwellheader.district,
+	wvjob.wvtyp,
+	wvwellheader.fieldname,
+	wvjobrig.rigno,
+	wvjob.currencycode,
+	wvjob.depthdrilledcalc,
+	wvjob.afetotalcalc,
+	wvjob.costtotalcalc,
+	wvjobreport.usertxt1,
+	wvjobreport.summaryops,
+	wvjobreport.dttmstart,
+	wvjobreport.dttmend,
+	wvwellheader.dttmspud, wvjobreport.usertxt2 , 
+	wvjobreport.PlanNextRptOps , 
+	wvwellheader.usernum6 ,
+	wvjob.afesupamtcalc ,
+	wvjob.finalinvoicetotalcalc,
+	wvwellheader.operated,
+	wvjob.JobTyp
+	,wvjobreport.IDRecLastCasCalc  
+	,wvcas.des
+	,wvcas.depthbtm  	 
+FROM wvwellheader 
+INNER JOIN 
+	wvjob ON wvwellheader.idwell = wvjob.idwell 
+INNER JOIN 
+	wvjobreport ON wvjob.idrec = wvjobreport.idrecparent
+LEFT JOIN
+	wvjobrig ON (wvjob.idrec = wvjobrig.idrecparent
+		AND (wvjobrig.dttmstart = (
+			SELECT MAX(wvjobrig.dttmstart) FROM wvjobrig 
+				WHERE wvjobrig.dttmstart <=Cast(GetDate() AS DATE)
+				AND wvjob.idrec = wvjobrig.idrecparent)))
+LEFT JOIN
+	wvcas ON wvjobreport.idreclastcascalc = wvcas.idrec 
+WHERE Cast(wvjobreport.dttmstart AS Date) >= Cast(GetDate() - Cast(#[flowVars.daysBack] As Int) As Date)
+AND Cast(wvjobreport.dttmend As Date) <= Cast(GetDate() As Date)
+AND wvwellheader.district in (${wellview.global}) 
+AND wvjob.wvtyp = #[flowVars.jobType]
+ORDER BY wvwellheader.wellname]]></db:parameterized-query>
+
+        </db:select>
+        <logger message="system layer after DB call" level="INFO" doc:name="Logger" />
+        
+        <json:object-to-json-transformer returnClass="java.lang.String" doc:name="Object to JSON" />
+        <set-payload value="#[payload]" mimeType="application/json" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-sys-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    
+    </flow>
+    
+    
+    <flow name="well-info-sys-getWell-wellId-cost-report-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="wellId" value="#[message.inboundProperties.'http.uri.params'.wellId]" />
+        	<add-message-property key="daysBack" value="#[message.inboundProperties.'http.uri.params'.daysBack]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Wellview Database">
+            <db:parameterized-query><![CDATA[select
+	  a.idrecparent idrecparent
+	  ,a.idwell idwell
+      ,a.reportdaycalc 'Job Day'
+	  ,a.reportnocalc 'Report Number'
+	  ,a.costtotalcalc 'Daily Cost'
+	  ,a.costtodatecalc 'Cum Daily Cost'
+	  ,Cast(a.dttmstart AS Date) 'Date'
+	  ,a.summaryops summaryops
+	  ,a.idreclastcascalc
+	  ,wvcas.des
+	  ,wvcas.depthbtm 	  	  
+from wvt_wvjobreport a, wvcas
+where a.idrecparent = #[flowVars.wellId] and
+Cast(a.dttmstart AS Date) >= Cast(GetDate() - Cast(#[flowVars.daysBack] As Int) As Date)
+and  a.idreclastcascalc = wvcas.idrec
+]]></db:parameterized-query>
+        </db:select>
+        <json:object-to-json-transformer returnClass="java.lang.String" doc:name="Object to JSON" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <logger message="payload is #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger"/>
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-sys-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-sys-getWell-job-cost-report-daysBack-job-daysBack-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <!-- <add-message-property key="districtName" value="#[message.inboundProperties.'http.uri.params'.districtName]" />
+             --><add-message-property key="reportDaysBack" value="#[message.inboundProperties.'http.uri.params'.reportDaysBack]" />
+            <add-message-property key="jobDaysBack" value="#[message.inboundProperties.'http.uri.params'.jobDaysBack]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <logger message="system layer before DB call" level="INFO" doc:name="Logger" />
+        <logger message="DB call is select  a.idrecparent idjob, a.idwell idwell, a.reportdaycalc 'Job Day',a.reportnocalc 'Report Number',a.costtotalcalc 'Daily Cost',a.costtodatecalc 'Cum Daily Cost',Cast(a.dttmstart AS Date) 'Date',a.summaryops summaryops,b.operated operated from wvt_wvjobreport a, wvt_wvwellheader b where Cast(a.dttmstart AS Date) &gt;= Cast((GetDate() - Cast(#[flowVars.reportDaysBack] As Int)) As Date) and a.idwell = b.idwell and a.idrecparent in (	SELECT DISTINCT wvjob.idrec	FROM wvwellheader INNER JOIN wvjob ON wvwellheader.idwell = wvjob.idwell INNER JOIN	wvjobreport ON wvjob.idrec = wvjobreport.idrecparent LEFT JOIN wvjobrig ON (wvjob.idrec = wvjobrig.idrecparent AND (wvjobrig.dttmstart = ( SELECT MAX(wvjobrig.dttmstart) FROM wvjobrig	WHERE wvjobrig.dttmstart &lt;=Cast(GetDate() AS DATE) AND wvjob.idrec = wvjobrig.idrecparent))) LEFT JOIN wvcas on wvjobreport.idreclastcascalc = wvcas.idrec  WHERE Cast(wvjobreport.dttmstart AS Date) &gt;= GetDate() - Cast(#[flowVars.jobDaysBack] As Int) AND Cast(wvjobreport.dttmend As Date) &lt;= Cast(GetDate() As Date))" level="INFO" doc:name="Logger" />
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Database International">
+            <db:parameterized-query><![CDATA[select
+  a.idrecparent idjob,
+  a.idwell idwell,
+  a.reportdaycalc 'Job Day',
+  a.reportnocalc 'Report Number',
+  a.costtotalcalc 'Daily Cost',
+  a.costtodatecalc 'Cum Daily Cost',
+  Cast(a.dttmstart AS Date) 'Date',
+  a.summaryops summaryops,
+  b.operated operated
+from wvt_wvjobreport a, wvt_wvwellheader b
+where Cast(a.dttmstart AS Date) >= Cast((GetDate() - Cast(#[flowVars.reportDaysBack] As Int)) As Date) and
+a.idwell = b.idwell
+and a.idrecparent in (
+	SELECT DISTINCT wvjob.idrec
+	FROM wvwellheader 
+	INNER JOIN 
+	wvjob ON wvwellheader.idwell = wvjob.idwell 
+	INNER JOIN 
+	wvjobreport ON wvjob.idrec = wvjobreport.idrecparent
+	LEFT JOIN
+	wvjobrig ON (wvjob.idrec = wvjobrig.idrecparent
+	AND (wvjobrig.dttmstart = (
+		SELECT MAX(wvjobrig.dttmstart) FROM wvjobrig 
+		WHERE wvjobrig.dttmstart <=Cast(GetDate() AS DATE)
+		AND wvjob.idrec = wvjobrig.idrecparent)))
+	LEFT JOIN 
+	wvcas on wvjobreport.idreclastcascalc = wvcas.idrec  
+	WHERE Cast(wvjobreport.dttmstart AS Date) >= Cast(GetDate() - Cast(#[flowVars.jobDaysBack] As Int)  as Date) 
+		AND Cast(wvjobreport.dttmend As Date) <= Cast(GetDate() As Date)
+)]]></db:parameterized-query>
+
+        </db:select>
+        <logger message="system layer after DB call" level="INFO" doc:name="Logger" />
+        
+        <json:object-to-json-transformer returnClass="java.lang.String" doc:name="Object to JSON" />
+        <set-payload value="#[payload]" mimeType="application/json" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-sys-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    
+    </flow>
+    
+    <flow name="well-info-sys-getWell-job-report-daysBack-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            
+			<add-message-property key="daysBack" value="#[message.inboundProperties.'http.uri.params'.daysBack]" />
+            <add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <logger message="system layer before DB call" level="INFO" doc:name="Logger" />
+        <logger message="DB call is SELECT DISTINCT wvwellheader.idwell, wvjob.idrec, wvwellheader.wellname, wvwellheader.district, wvjob.wvtyp, wvwellheader.fieldname, wvjobrig.rigno, wvjob.currencycode, wvjob.afetotalcalc, wvjob.costtotalcalc, wvjobreport.usertxt1, wvjobreport.summaryops, wvjobreport.dttmstart, wvjobreport.dttmend, wvwellheader.dttmspud ,  wvjobreport.usertxt2 , wvjobreport.PlanNextRptOps ,  wvwellheader.usernum6 , wvjob.afesupamtcalc , wvjob.finalinvoicetotalcalc, wvwellheader.operated,  wvcas.[des],  wvcas.depthbtm FROM wvwellheader INNER JOIN wvjob ON wvwellheader.idwell = wvjob.idwell INNER JOIN wvjobreport ON wvjob.idrec = wvjobreport.idrecparent LEFT JOIN wvjobrig ON (wvjob.idrec = wvjobrig.idrecparent AND (wvjobrig.dttmstart = (	SELECT MAX(wvjobrig.dttmstart) FROM wvjobrig WHERE wvjobrig.dttmstart &lt;=Cast(GetDate() AS DATE)	AND wvjob.idrec = wvjobrig.idrecparent))) LEFT JOIN wvcas on wvjobreport.idreclastcascalc = wvcas.idrec WHERE Cast(wvjobreport.dttmstart AS Date) &gt;= Cast(GetDate() - Cast(#[flowVars.daysBack] As Int) As Date) AND Cast(wvjobreport.dttmend As Date) &lt;= Cast(GetDate() As Date)" level="INFO" doc:name="Logger" />
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Database International">
+            <db:parameterized-query><![CDATA[SELECT DISTINCT
+  wvwellheader.idwell,
+  wvjob.idrec,
+  wvwellheader.wellname,
+  wvwellheader.district,
+  wvjob.wvtyp,
+  wvwellheader.fieldname,
+  wvjobrig.rigno,
+  wvjob.currencycode,
+  wvjob.afetotalcalc,
+  wvjob.costtotalcalc,
+  wvjobreport.usertxt1,
+  wvjobreport.summaryops,
+  wvjobreport.dttmstart,
+  wvjobreport.dttmend,
+  wvwellheader.dttmspud , 
+  wvjobreport.usertxt2 ,
+  wvjobreport.PlanNextRptOps , 
+  wvwellheader.usernum6 ,
+  wvjob.afesupamtcalc ,
+  wvjob.finalinvoicetotalcalc,
+  wvwellheader.operated,   
+  wvcas.[des], 
+  wvcas.depthbtm,
+  wvjob.JobTyp 
+FROM wvwellheader 
+INNER JOIN 
+wvjob ON wvwellheader.idwell = wvjob.idwell 
+INNER JOIN 
+wvjobreport ON wvjob.idrec = wvjobreport.idrecparent
+LEFT JOIN
+wvjobrig ON (wvjob.idrec = wvjobrig.idrecparent
+	AND (wvjobrig.dttmstart = (
+		SELECT MAX(wvjobrig.dttmstart) FROM wvjobrig 
+		WHERE wvjobrig.dttmstart <=Cast(GetDate() AS DATE)
+		AND wvjob.idrec = wvjobrig.idrecparent)))
+LEFT JOIN 
+wvcas on wvjobreport.idreclastcascalc = wvcas.idrec  
+WHERE Cast(wvjobreport.dttmstart AS Date) >= Cast(GetDate() - Cast(#[flowVars.daysBack] As Int) As Date)
+AND Cast(wvjobreport.dttmend As Date) <= Cast(GetDate() As Date)]]></db:parameterized-query>
+
+        </db:select>
+        <logger message="system layer after DB call" level="INFO" doc:name="Logger" />
+        
+        <json:object-to-json-transformer returnClass="java.lang.String" doc:name="Object to JSON" />
+        <set-payload value="#[payload]" mimeType="application/json" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-sys-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    
+    </flow>
+    
+	<flow name="well-info-sys-getWell-time-log-daysBack-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            
+			<add-message-property key="daysBack" value="#[message.inboundProperties.'http.uri.params'.daysBack]" />
+            <add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <logger message="system layer before DB call" level="INFO" doc:name="Logger" />
+        <logger message="DB Call is select jrtl.idwell, jrtl.idrecparent, jrtl.idrec, jrtl.dttmstartcalc, CAST(datediff(MINUTE, jrtl.dttmstartcalc, jrtl.dttmendcalc) as decimal) / 60 as durationhours, jrtl.dttmendcalc, jrtl.code2 as [name], jrtl.unschedtyp, jrtl.depthstart, jrtl.com as operation, case when jrtl.unschedtyp = 'N' then CAST(datediff(MINUTE, jrtl.dttmstartcalc, jrtl.dttmendcalc) as decimal) / 60 else null end as problemdurationhoursfrom wvjobreporttimelog as jrtl left outer join wvjobprogramphase as jpp on jrtl.idrecjobprogramphasecalc = jpp.idrecwhere jrtl.idrecparent in ( SELECT DISTINCT wvjobreport.idrec FROM wvwellheader  INNER JOIN  wvjob ON wvwellheader.idwell = wvjob.idwell  INNER JOIN  wvjobreport ON wvjob.idrec = wvjobreport.idrecparent LEFT JOIN wvjobrig ON (wvjob.idrec = wvjobrig.idrecparent AND (wvjobrig.dttmstart = (  SELECT MAX(wvjobrig.dttmstart) FROM wvjobrig   WHERE wvjobrig.dttmstart &lt;=Cast(GetDate() AS DATE)  AND wvjob.idrec = wvjobrig.idrecparent))) LEFT JOIN  wvcas on wvjobreport.idreclastcascalc = wvcas.idrec   WHERE Cast(wvjobreport.dttmstart AS Date) &gt;= Cast(GetDate() - Cast(#[flowVars.daysBack] As Int) As Date)  AND Cast(wvjobreport.dttmend As Date) &lt;= Cast(GetDate() As Date))" level="INFO" doc:name="Logger"/>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Database International">
+            <db:parameterized-query><![CDATA[SELECT jrtl.idwell, jrtl.idrecparent, jrtl.idrec, 
+jrtl.dttmstartcalc, CAST(datediff(MINUTE, jrtl.dttmstartcalc, jrtl.dttmendcalc) as decimal) / 60 as durationhours, jrtl.dttmendcalc, 
+jrtl.code2 as [name], jrtl.unschedtyp, jrtl.depthstart, jrtl.com as operation, 
+case when jrtl.unschedtyp = 'N' then CAST(datediff(MINUTE, jrtl.dttmstartcalc, jrtl.dttmendcalc) as decimal) / 60 else null end as problemdurationhours
+from wvjobreporttimelog as jrtl left outer join wvjobprogramphase as jpp on jrtl.idrecjobprogramphasecalc = jpp.idrec
+where jrtl.idrecparent in (
+	SELECT DISTINCT wvjobreport.idrec
+	FROM wvwellheader 
+	INNER JOIN 
+	wvjob ON wvwellheader.idwell = wvjob.idwell 
+	INNER JOIN 
+	wvjobreport ON wvjob.idrec = wvjobreport.idrecparent
+	LEFT JOIN
+	wvjobrig ON (wvjob.idrec = wvjobrig.idrecparent
+	AND (wvjobrig.dttmstart = (
+		SELECT MAX(wvjobrig.dttmstart) FROM wvjobrig 
+		WHERE wvjobrig.dttmstart <=Cast(GetDate() AS DATE)
+		AND wvjob.idrec = wvjobrig.idrecparent)))
+	LEFT JOIN 
+	wvcas on wvjobreport.idreclastcascalc = wvcas.idrec  
+	WHERE Cast(wvjobreport.dttmstart AS Date) >= Cast(GetDate() - Cast(#[flowVars.daysBack] As Int) As Date)
+		AND Cast(wvjobreport.dttmend As Date) <= Cast(GetDate() As Date)
+)]]></db:parameterized-query>
+
+        </db:select>
+        <logger message="system layer after DB call" level="INFO" doc:name="Logger" />
+        
+        <json:object-to-json-transformer returnClass="java.lang.String" doc:name="Object to JSON" />
+        <set-payload value="#[payload]" mimeType="application/json" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-sys-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    
+    </flow>
+	    
+</mule>

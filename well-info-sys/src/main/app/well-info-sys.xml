@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+    <!-- <http:listener-config name="wellinfo-sys-httpListenerConfig" host="${https.host}" port="${https.port}" doc:name="HTTP Listener Configuration" protocol="HTTPS">
+        <tls:context>
+            <tls:key-store type="jks" path="keystore.jks" keyPassword="password" password="password" />
+        </tls:context>
+    </http:listener-config>
+    <apikit:config name="wellinfo-sys-config" raml="wellinfo-sys.raml" consoleEnabled="false" doc:name="Router" />
+    <db:generic-config name="Generic_Database_Configuration" url="jdbc:sqlserver://${wellview.db.host};databaseName=${wellview.db.name};user=${wellview.db.username};password=${wellview.db.password}" driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver" doc:name="Generic Database Configuration" />
+     --><spring:beans>
+        <spring:import resource="classpath*:exception-handling.xml" />
+    </spring:beans>
+    <flow name="wellinfo-sys-main">
+        <http:listener config-ref="wellinfo-sys-httpListenerConfig" path="/api/${api.version}/*" doc:name="HTTPS" />
+        <apikit:router config-ref="wellinfo-sys-config" doc:name="APIkit Router" />
+        <exception-strategy ref="wellinfo-sys-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />
+    </flow>
+    <flow name="wellinfo-sys-console">
+        <http:listener config-ref="wellinfo-sys-httpListenerConfig" path="/console/*" doc:name="HTTPS" />
+        <apikit:console config-ref="wellinfo-sys-config" doc:name="APIkit Console" />
+    </flow>
+    <flow name="get:/well/{wellId}:wellinfo-sys-config">
+        <flow-ref name="well-info-sys-getWell-wellId-main-flow" doc:name="well-info-sys-getWell-wellId-main-flow"/>
+    </flow>
+    <flow name="get:/well/{wellId}/costReport/{daysBack}:wellinfo-sys-config">
+        <flow-ref name="well-info-sys-getWell-wellId-cost-report-main-flow" doc:name="well-info-sys-getWell-wellId-cost-report-main-flow"/>
+    </flow>
+    
+    <flow name="get:/well/{wellId}/job:wellinfo-sys-config">
+        <flow-ref name="well-info-sys-getWell-wellId-job-main-flow" doc:name="well-info-sys-getWell-wellId-job-main-flow"/>
+    </flow>
+    <flow name="get:/well/{wellId}/job/report:wellinfo-sys-config">
+        <flow-ref name="well-info-sys-getWell-wellId-job-report-main-flow" doc:name="well-info-sys-getWell-wellId-job-report-main-flow"/>
+    </flow>
+    <flow name="get:/well/{wellId}/job/{jobId}:wellinfo-sys-config">
+        <flow-ref name="well-info-sys-getWell-wellId-job-jobId-main-flow" doc:name="well-info-sys-getWell-wellId-job-jobId-main-flow"/>
+    </flow>
+    <flow name="get:/well/{wellId}/job/{jobId}/report:wellinfo-sys-config">
+        <flow-ref name="well-info-sys-getWell-wellId-job-jobId-report-main-flow" doc:name="well-info-sys-getWell-wellId-job-jobId-report-main-flow"/>
+    </flow>
+    <flow name="get:/well/{wellId}/job/{jobId}/rig:wellinfo-sys-config">
+        <flow-ref name="well-info-sys-getWell-wellId-job-jobId-rig-main-flow" doc:name="well-info-sys-getWell-wellId-job-jobId-rig-main-flow"/>
+    </flow>
+    <flow name="get:/well:wellinfo-sys-config">
+        <flow-ref name="well-info-sys-getWell-main-flow" doc:name="well-info-sys-getWell-main-flow"/>
+    </flow>
+    <flow name="get:/well/country/{countryName}:wellinfo-sys-config">
+        <flow-ref name="well-info-sys-getWell-country-countryName-main-flow" doc:name="well-info-sys-getWell-country-countryName-main-flow"/>
+    </flow>
+    <flow name="get:/well/district/{districtName}:wellinfo-sys-config">
+        <flow-ref name="well-info-sys-getWell-district-districtName-main-flow" doc:name="well-info-sys-getWell-district-districtName-main-flow"/>
+    </flow>
+    <flow name="get:/well/name/{wellName}:wellinfo-sys-config">
+        <flow-ref name="well-info-sys-getWell-name-wellName-main-flow" doc:name="well-info-sys-getWell-name-wellName-main-flow"/>
+    </flow>
+    <flow name="get:/well/district/{districtName}/report/{daysBack}/{jobType}:wellinfo-sys-config">
+        <flow-ref name="well-info-sys-getWell-district-districtName-report-daysBack-jobType-main-flow" doc:name="well-info-sys-getWell-district-districtName-report-daysBack-jobType-main-flow"/>
+    </flow>
+    <flow name="get:/well/international/report/{daysBack}/{jobType}:wellinfo-sys-config">
+        <flow-ref name="well-info-sys-getWell-global-report-daysBack-jobType-main-flow" doc:name="well-info-sys-getWell-global-report-daysBack-jobType-main-flow"/>
+    </flow>
+    
+    <flow name="get:/well/jobCostReport/{reportDaysBack}/{jobDaysBack}:wellinfo-sys-config">
+        <flow-ref name="well-info-sys-getWell-job-cost-report-daysBack-job-daysBack-main-flow" doc:name="well-info-sys-getWell-job-cost-report-daysBack-job-daysBack-main-flow"/>
+    </flow>
+    
+    <flow name="get:/well/jobReport/{daysBack}:wellinfo-sys-config">
+        <flow-ref name="well-info-sys-getWell-job-report-daysBack-main-flow" doc:name="well-info-sys-getWell-job-report-daysBack-main-flow"/>
+    </flow>
+    
+    <flow name="get:/well/timeLog/{daysBack}:wellinfo-sys-config">
+        <flow-ref name="well-info-sys-getWell-time-log-daysBack-main-flow" doc:name="well-info-sys-getWell-time-log-daysBack-main-flow"/>
+    </flow>
+    
+</mule>
