@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:jersey="http://www.mulesoft.org/schema/mule/jersey" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/jersey http://www.mulesoft.org/schema/mule/jersey/current/mule-jersey.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+    <!-- <http:listener-config name="wellinfo-proc-httpListenerConfig" host="${https.host}" port="${https.port}" doc:name="HTTP Listener Configuration" protocol="HTTPS">
+        <tls:context>
+            <tls:key-store type="jks" path="keystore.jks" keyPassword="password" password="password" />
+        </tls:context>
+    </http:listener-config>
+    <apikit:config name="wellinfo-proc-config" raml="wellinfo-proc.raml" consoleEnabled="false" doc:name="Router" keepRamlBaseUri="false" />
+    <http:request-config name="HTTP_Request_Configuration" protocol="HTTPS" host="${wellinfo.sysapi.https.host}" port="${wellinfo.sysapi.https.port}" doc:name="HTTP Request Configuration" basePath="/api/${wellinfo.sysapi.version}" connectionIdleTimeout="300000">
+        <tls:context>
+            <tls:trust-store path="keystore.jks" password="password" type="jks"/>
+        </tls:context>
+
+    </http:request-config> -->
+    <flow name="wellinfo-proc-main">
+        <http:listener config-ref="wellinfo-proc-httpListenerConfig" path="/api/${api.app.version}/*" doc:name="HTTPS" />
+        <apikit:router config-ref="wellinfo-proc-config" doc:name="APIkit Router" />
+        <exception-strategy ref="wellinfo-proc-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />
+    </flow>
+    <flow name="wellinfo-proc-console">
+        <http:listener config-ref="wellinfo-proc-httpListenerConfig" path="/console/*" doc:name="HTTPS" />
+        <apikit:console config-ref="wellinfo-proc-config" doc:name="APIkit Console" />
+    </flow>
+    <flow name="get:/report/daily/completion/{district}:wellinfo-proc-config">
+        <flow-ref name="well-info-proc-getReport-daily-completion-district-main-flow" doc:name="well-info-proc-getReport-daily-completion-district-main-flow"/>
+    </flow>
+    <flow name="get:/report/{daysBack}/completion/{district}:wellinfo-proc-config">
+        <flow-ref name="well-info-proc-getReport-daysBack-completion-district-main-flow" doc:name="well-info-proc-getReport-daysBack-completion-district-main-flow"/>
+        
+    </flow>
+    <flow name="get:/report/daily/drilling/{district}:wellinfo-proc-config">
+        <flow-ref name="well-info-proc-getReport-daily-drilling-district-main-flow" doc:name="well-info-proc-getReport-daily-drilling-district-main-flow"/>
+        
+    </flow>
+    <flow name="get:/report/{daysBack}/drilling/{district}:wellinfo-proc-config">
+        <flow-ref name="well-info-proc-getReport-daysBack-drilling-district-main-flow" doc:name="well-info-proc-getReport-daysBack-drilling-district-main-flow"/>
+        
+    </flow>
+    <flow name="get:/report/daily/intervention/{district}:wellinfo-proc-config">
+        <flow-ref name="well-info-proc-getReport-daily-intervention-district-main-flow" doc:name="well-info-proc-getReport-daily-intervention-district-main-flow"/>
+        
+    </flow>
+    <flow name="get:/report/{daysBack}/intervention/{district}:wellinfo-proc-config">
+        <flow-ref name="well-info-proc-getReport-daysBack-intervention-district-main-flow" doc:name="well-info-proc-getReport-daysBack-intervention-district-main-flow"/>
+        
+    </flow>
+    <flow name="get:/internationalReport/{daysBack}/intervention:wellinfo-proc-config">
+        <flow-ref name="well-info-proc-getGlobalReport-daysBack-intervention-main-flow" doc:name="well-info-proc-getGlobalReport-daysBack-intervention-main-flow"/>
+       
+    </flow>
+    
+    <flow name="get:/internationalReport/daily/intervention:wellinfo-proc-config">
+        <flow-ref name="well-info-proc-getGlobalReport-daily-intervention-main-flow" doc:name="well-info-proc-getGlobalReport-daysBack-intervention-main-flow"/>
+       
+    </flow>
+    
+    <flow name="get:/internationalReport/{daysBack}/completion:wellinfo-proc-config">
+        <flow-ref name="well-info-proc-getGlobalReport-daysBack-completion-main-flow" doc:name="well-info-proc-getGlobalReport-daysBack-intervention-main-flow"/>
+       
+    </flow>
+    
+    <flow name="get:/internationalReport/daily/completion:wellinfo-proc-config">
+        <flow-ref name="well-info-proc-getGlobalReport-daily-completion-main-flow" doc:name="well-info-proc-getGlobalReport-daysBack-intervention-main-flow"/>
+       
+    </flow>
+    
+    <flow name="get:/internationalReport/{daysBack}/drilling:wellinfo-proc-config">
+        <flow-ref name="well-info-proc-getGlobalReport-daysBack-drilling-main-flow" doc:name="well-info-proc-getGlobalReport-daysBack-intervention-main-flow"/>
+       
+    </flow>
+    
+    <flow name="get:/internationalReport/daily/drilling:wellinfo-proc-config">
+        <flow-ref name="well-info-proc-getGlobalReport-daily-drilling-main-flow" doc:name="well-info-proc-getGlobalReport-daysBack-intervention-main-flow"/>
+       
+    </flow>
+    
+    <flow name="get:/costReport/{wellId}/{daysBack}:wellinfo-proc-config">
+        <flow-ref name="well-info-proc-getCostReport-daysBack-wellId-main-flow" doc:name="well-info-proc-getCostReport-daysBack-wellId-main-flow"/>
+       
+    </flow>
+    
+    <flow name="get:/jobCostReport/{reportDaysBack}/{jobDaysBack}:wellinfo-proc-config">
+        <flow-ref name="well-info-proc-getJobCostReport-reportDaysBack-jobDaysBack-main-flow" doc:name="well-info-proc-getJobCostReport-reportDaysBack-jobDaysBack-main-flow"/>
+       
+    </flow>
+    
+    <flow name="get:/jobReport/{daysBack}:wellinfo-proc-config">
+        <flow-ref name="well-info-proc-getJobReport-daysBack-main-flow" doc:name="well-info-proc-getJobReport-daysBack-main-flow"/>
+       
+    </flow>
+    
+    <flow name="get:/timeLog/{daysBack}:wellinfo-proc-config">
+        <flow-ref name="well-info-proc-getTimeLog-daysBack-main-flow" doc:name="well-info-proc-getTimeLog-daysBack-main-flow"/>
+       
+    </flow>
+    
+</mule>

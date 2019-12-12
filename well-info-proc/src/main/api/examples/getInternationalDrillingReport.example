@@ -1,0 +1,35 @@
+[
+  {
+    "district": "Australia",
+    "afetotalcalc": 31889.87,
+    "costtotalcalc": 31889.91,
+    "idrec": "81A3556FE0CA469D8826C5A6D1F83275",
+    "dttmstart": 1522024200000,
+    "depthdrilledcalc": null,
+    "idwell": "5D70DAF0829347859EF7F7C83F67C88E",
+    "wellname": "BESA-11",
+    "rigno": null,
+    "wvtyp": "Drilling",
+    "fieldname": "Belum",
+    "currencycode": "USD",
+    "usertxt1": "Slickline Operations",
+    "summaryops": "Backload Geowell equipment from WPPA to Efogen Nuha, total 08 lifts.\r\nTraveled to BESA.\r\nOffload Geowell equipment onto BESA deck, total 08 lifts.\r\nArranged and spot equipment on deck.",
+    "dttmend": 1522110600000
+  },
+  {
+    "district": "Australia",
+    "afetotalcalc": 31889.87,
+    "costtotalcalc": 31889.91,
+    "idrec": "81A3556FE0CA469D8826C5A6D1F83275",
+    "dttmstart": 1522197000000,
+    "depthdrilledcalc": null,
+    "idwell": "5D70DAF0829347859EF7F7C83F67C88E",
+    "wellname": "BESA-11",
+    "rigno": null,
+    "wvtyp": "Drilling",
+    "fieldname": "Belum",
+    "currencycode": "USD",
+    "usertxt1": "Slickline Operations",
+    "summaryops": "Performed inflow test TRSV valve monitor for 15 mins, good test.\r\nRIH Flapper probe to TRSCSSV depth of 152.04m MD-RKB.\r\nRIH 2.50\" Drift and tagged held-up at 1076m MD-RKB. \r\nPerformed SGS as per program.\r\nEDAS engineer retrieved and download data.\r\nRigged down PCE from BESA-11. \r\nHand back well to Production.",
+    "dttmend": 1522283400000
+  }]

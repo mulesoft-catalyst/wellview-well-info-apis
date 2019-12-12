@@ -1,0 +1,31 @@
+[{
+	"district": "US Onshore",
+	"afetotalcalc": 3733000.0,
+	"costtotalcalc": 111352.29999999999,
+	"idrec": "F5616DA16325490981B85425E2A91B96",
+	"dttmstart": 1525890600000,
+	"idwell": "21AE3D471CB8497686D3C5E44AD86C91",
+	"wellname": "Baring 10H",
+	"rigno": "Standby",
+	"wvtyp": "Completion",
+	"fieldname": "West Tilden",
+	"currencycode": null,
+	"usertxt1": "Standby",
+	"summaryops": "Standby for frac operations.",
+	"dttmend": 1525977000000
+}, {
+	"district": "US Onshore",
+	"afetotalcalc": 4430000.0,
+	"costtotalcalc": 113476.05999999998,
+	"idrec": "7615787C16DE48BDAC22C9FB7CC4F754",
+	"dttmstart": 1525890600000,
+	"idwell": "31237606E8DE42C4BB33AC71F5DAB372",
+	"wellname": "BH Unit 1H",
+	"rigno": "Standby",
+	"wvtyp": "Completion",
+	"fieldname": "West Tilden",
+	"currencycode": null,
+	"usertxt1": "Standby",
+	"summaryops": "Standby for frac operations.",
+	"dttmend": 1525977000000
+}]

@@ -1,0 +1,143 @@
+#%RAML 1.0
+title: wellinfo-process
+version: 1.0-dev
+documentation: 
+- title: Well Information API
+  content: The Well Information System API provides features to query from WellView.
+baseUri: https://moc-wellinfo-sys-dev.cloubhub.io/api/v1
+securitySchemes: 
+  basic:
+    displayName: HTTP Basic Authentication
+    description: This API supports Basic Authentication
+    type: Basic Authentication
+securedBy: [ basic ]
+/report/daily/drilling/{district}:
+  get:
+    description: Get daily drilling report for district
+    responses:
+      200:
+        body: 
+          application/json:
+            example: !include examples/getDrillingReport.example
+/report/{daysBack}/drilling/{district}:
+  get:
+    description: Get drilling report from number of days back for district
+    responses:
+      200:
+        body: 
+          application/json:
+            example: !include examples/getDrillingReport.example
+/report/daily/completion/{district}:
+  get:
+    description: Get daily completion report for district
+    responses:
+      200:
+        body: 
+          application/json:
+            example: !include examples/getCompletionReport.example
+/report/{daysBack}/completion/{district}:
+  get:
+    description: Get completion report from number of days back for district
+    responses:
+      200:
+        body: 
+          application/json:
+            example: !include examples/getCompletionReport.example
+/report/daily/intervention/{district}:
+  get:
+    description: Get daily intervention report for district
+    responses:
+      200:
+        body: 
+          application/json:
+            example: !include examples/getInterventionReport.example
+/report/{daysBack}/intervention/{district}:
+  get:
+    description: Get daily intervention report from number of days back for district
+    responses:
+      200:
+        body: 
+          application/json:
+            example: !include examples/getInterventionReport.example
+/internationalReport/daily/drilling:
+  get:
+    description: Get daily drilling report for global
+    responses:
+      200:
+        body: 
+          application/json:
+            example: !include examples/getInternationalDrillingReport.example
+/internationalReport/{daysBack}/drilling:
+  get:
+    description: Get drilling report from number of days back for global
+    responses:
+      200:
+        body: 
+          application/json:
+            example: !include examples/getInternationalDrillingReport.example  
+/internationalReport/daily/completion:
+  get:
+    description: Get daily completion report for global
+    responses:
+      200:
+        body: 
+          application/json:
+            example: !include examples/getInternationalCompletionReport.example
+/internationalReport/{daysBack}/completion:
+  get:
+    description: Get complettion report from number of days back for global
+    responses:
+      200:
+        body: 
+          application/json:
+            example: !include examples/getInternationalCompletionReport.example  
+/internationalReport/daily/intervention:
+  get:
+    description: Get daily intervention report from number of days back for global
+    responses:
+      200:
+        body: 
+          application/json:
+            example: !include examples/getInternationalInterventionReport.example
+/internationalReport/{daysBack}/intervention:
+  get:
+    description: Get intervention report from number of days back for global
+    responses:
+      200:
+        body: 
+          application/json:
+            example: !include examples/getInternationalInterventionReport.example  
+/costReport/{wellId}/{daysBack}:
+  get:
+    description: Get cost report from number of days back for given well Id
+    responses:
+      200:
+        body: 
+          application/json:
+            example: !include examples/getWellIdCostReport.example
+/jobCostReport/{reportDaysBack}/{jobDaysBack}:
+  get:
+    description: Get job cost report from number of days back for job days back
+    responses:
+      200:
+        body: 
+          application/json:
+            example: !include examples/getJobCostReport.example
+/jobReport/{daysBack}:
+  get:
+    description: Get job report from number of days back 
+    responses:
+      200:
+        body: 
+          application/json:
+            example: !include examples/getJobReport.example
+/timeLog/{daysBack}:
+  get:
+    description: Get Time Log from number of days back 
+    responses:
+      200:
+        body: 
+          application/json:
+            example: !include examples/getTimeLog.example
+                        
+            

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<apikit:mapping-exception-strategy name="wellinfo-proc-apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+    
+    <choice-exception-strategy	name="well-info-proc-Custom_Exception_Strategy">
+		
+		<catch-exception-strategy 
+			doc:name="Common Exception">
+			<set-variable variableName="generalErrorCode"
+				value="#['Internal Error']" doc:name="Set custom code" />
+			<set-variable variableName="vErrorPayload" value="#[exception.message]"
+				doc:name="Set Error Payload" />
+            <flow-ref name="well-info-procExceptionEmailSub_Flow" doc:name="well-info-procExceptionEmailSub_Flow"/>
+			<set-property propertyName="http.status" value="503"
+				doc:name="Http503" />
+            <logger message="1. FlowName: #[context:serviceName]; generalErrorCode = #[flowVars.generalErrorCode] ; vErrorPayload = #[flowVars.vErrorPayload]" level="INFO" doc:name="Logger"/>
+            <dw:transform-message doc:name="Transform Message">
+                <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	Status: "Error",
+	Error: [{
+		code: flowVars.generalErrorCode,
+		text: flowVars.vErrorPayload
+	}]
+}]]></dw:set-payload>
+            </dw:transform-message>
+				
+
+		</catch-exception-strategy>
+		
+	</choice-exception-strategy>
+	<sub-flow name="well-info-procExceptionEmailSub_Flow">
+        <object-to-string-transformer doc:name="Object to String"/>
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="distributionList" value="SYSTEM_ERROR"/>
+            <add-message-property key="subject" value="Wellview Process Layer Error"/>
+            <add-message-property key="body" value="#[flowVars.vErrorPayload]"/>
+        </message-properties-transformer>
+        <flow-ref name="emailWithoutAttachment" doc:name="emailWithoutAttachment"/>
+    </sub-flow>
+</mule>

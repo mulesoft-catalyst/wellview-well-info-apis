@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:secure-property-placeholder="http://www.mulesoft.org/schema/mule/secure-property-placeholder" xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw" xmlns:context="http://www.springframework.org/schema/context" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.mulesoft.org/schema/mule/api-platform-gw http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd
+http://www.mulesoft.org/schema/mule/secure-property-placeholder http://www.mulesoft.org/schema/mule/secure-property-placeholder/current/mule-secure-property-placeholder.xsd">
+    <secure-property-placeholder:config name="Secure_Property_Placeholder" key="${wellview.enc.key}" location="properties/p-wellview-${env.name}.properties,properties/p-wellview-common.properties,commonassets-${env.name}.properties" doc:name="Secure Property Placeholder"/>
+
+	<spring:beans>
+	    	<spring:import resource="classpath:core-services-client.xml"/>
+	    	<spring:import resource="classpath:error-handling.xml"/>
+	    	<spring:import resource="classpath:common.xml"/>
+    </spring:beans>
+    <api-platform-gw:api apiName="${api.name}" version="${api.version}" flowRef="${api.flowname}" create="true" apikitRef="wellinfo-proc-config" doc:name="API Autodiscovery"/>
+
+	<http:listener-config name="wellinfo-proc-httpListenerConfig" host="${https.host}" port="${https.port}" doc:name="HTTP Listener Configuration" protocol="HTTPS">
+        <tls:context>
+            <tls:key-store type="jks" path="keystore.jks" keyPassword="password" password="password"/>
+        </tls:context>
+
+    </http:listener-config>
+    <apikit:config name="wellinfo-proc-config" raml="wellinfo-proc.raml" consoleEnabled="false" doc:name="Router" keepRamlBaseUri="false" />
+    <http:request-config name="HTTP_Request_Configuration" protocol="HTTPS" host="${wellinfo.sysapi.https.host}" port="${wellinfo.sysapi.https.port}" doc:name="HTTP Request Configuration" basePath="/api/${wellinfo.sysapi.version}" connectionIdleTimeout="300000">
+        <http:basic-authentication username="${internal.client.id}" password="${internal.client.secret}" preemptive="true"/>
+        <tls:context>
+            <tls:trust-store path="keystore.jks" password="password" type="jks" insecure="true"/>
+        </tls:context>
+
+
+    </http:request-config>
+</mule>

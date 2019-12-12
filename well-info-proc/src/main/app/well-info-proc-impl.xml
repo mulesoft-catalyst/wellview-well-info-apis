@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<flow name="well-info-proc-getReport-daily-completion-district-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="district" value="#[message.inboundProperties.'http.uri.params'.district]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <!-- <http:request config-ref="HTTP_Request_Configuration" path="/well/district/{districtName}/report/1/${wellinfo.sysapi.jobstatus.completion}" method="GET" doc:name="HTTPS - Get prior day completion">
+         --><http:request config-ref="HTTP_Request_Configuration" path="${system.report.basepath}/1/${wellinfo.sysapi.jobstatus.completion}" method="GET" doc:name="HTTPS - Get prior day completion">
+            <http:request-builder>
+                <http:uri-param paramName="districtName" value="#[flowVars.district]" />
+            </http:request-builder>
+        </http:request>
+        <logger message="payload in process layer befor JTO #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <set-payload value="#[payload]" doc:name="Set Payload" mimeType="application/json"/>
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-proc-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-proc-getReport-daysBack-completion-district-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="district" value="#[message.inboundProperties.'http.uri.params'.district]" />
+            <add-message-property key="daysBack" value="#[message.inboundProperties.'http.uri.params'.daysBack]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <http:request config-ref="HTTP_Request_Configuration" path="${system.report.basepath}/{daysBack}/${wellinfo.sysapi.jobstatus.completion}" method="GET" doc:name="HTTPS - Get completion for number of days back">
+            <http:request-builder>
+                <http:uri-param paramName="districtName" value="#[flowVars.district]" />
+                <http:uri-param paramName="daysBack" value="#[flowVars.daysBack]" />
+            </http:request-builder>
+        </http:request>
+        <logger message="payload in process layer befor JTO #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-proc-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-proc-getReport-daily-drilling-district-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="district" value="#[message.inboundProperties.'http.uri.params'.district]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <http:request config-ref="HTTP_Request_Configuration" path="${system.report.basepath}/1/${wellinfo.sysapi.jobstatus.drilling}" method="GET" doc:name="HTTPS - Get prior day drilling">
+            <http:request-builder>
+                <http:uri-param paramName="districtName" value="#[flowVars.district]" />
+            </http:request-builder>
+        </http:request>
+        <logger message="payload in process layer befor JTO #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-proc-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-proc-getReport-daysBack-drilling-district-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="district" value="#[message.inboundProperties.'http.uri.params'.district]" />
+            <add-message-property key="daysBack" value="#[message.inboundProperties.'http.uri.params'.daysBack]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <http:request config-ref="HTTP_Request_Configuration" path="${system.report.basepath}/{daysBack}/${wellinfo.sysapi.jobstatus.drilling}" method="GET" doc:name="HTTPS - Get drilling for number of days back">
+            <http:request-builder>
+                <http:uri-param paramName="districtName" value="#[flowVars.district]" />
+                <http:uri-param paramName="daysBack" value="#[flowVars.daysBack]" />
+            </http:request-builder>
+        </http:request>
+        <logger message="payload in process layer befor JTO #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-proc-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-proc-getReport-daily-intervention-district-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="district" value="#[message.inboundProperties.'http.uri.params'.district]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <http:request config-ref="HTTP_Request_Configuration" path="${system.report.basepath}/1/${wellinfo.sysapi.jobstatus.intervention}" method="GET" doc:name="HTTPS - Get prior day intervention">
+            <http:request-builder>
+                <http:uri-param paramName="districtName" value="#[flowVars.district]" />
+            </http:request-builder>
+        </http:request>
+        <logger message="payload in process layer before json-to-object #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <set-payload value="#[message.payloadAs(java.lang.String)]" doc:name="Set Payload" />
+        <logger message="#[payload]" level="INFO" doc:name="Logger" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-proc-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-proc-getReport-daysBack-intervention-district-main-flow">
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="district" value="#[message.inboundProperties.'http.uri.params'.district]" />
+            <add-message-property key="daysBack" value="#[message.inboundProperties.'http.uri.params'.daysBack]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <http:request config-ref="HTTP_Request_Configuration" path="${system.report.basepath}/{daysBack}/${wellinfo.sysapi.jobstatus.intervention}" method="GET" doc:name="HTTPS - Get intervention for number of days back">
+            <http:request-builder>
+                <http:uri-param paramName="districtName" value="#[flowVars.district]" />
+                <http:uri-param paramName="daysBack" value="#[flowVars.daysBack]" />
+            </http:request-builder>
+        </http:request>
+        <logger message="payload in process layer after json-to-object #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-proc-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-proc-getGlobalReport-daysBack-intervention-main-flow">
+       <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <!-- <add-message-property key="district" value="#[message.inboundProperties.'http.uri.params'.district]" /> -->
+            <add-message-property key="daysBack" value="#[message.inboundProperties.'http.uri.params'.daysBack]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+       	<logger message="payload in process layer before sys layer call #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <http:request config-ref="HTTP_Request_Configuration" path="/well/international/report/{daysBack}/${wellinfo.sysapi.jobstatus.intervention}" method="GET" doc:name="HTTPS - Get intervention for number of days back International">
+            <http:request-builder>
+                <http:uri-param paramName="daysBack" value="#[flowVars.daysBack]" />
+            </http:request-builder>
+        </http:request>
+        <logger message="payload in process layer after json-to-object #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-proc-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+   
+   	<flow name="well-info-proc-getGlobalReport-daily-intervention-main-flow">
+       <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+       	<logger message="payload in process layer before sys layer call #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <http:request config-ref="HTTP_Request_Configuration" path="/well/international/report/1/${wellinfo.sysapi.jobstatus.intervention}" method="GET" doc:name="HTTPS - Get prior days intervention International">
+        </http:request>
+        <logger message="payload in process layer after json-to-object #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-proc-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow> 
+    
+    <flow name="well-info-proc-getGlobalReport-daysBack-completion-main-flow">
+       <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <!-- <add-message-property key="district" value="#[message.inboundProperties.'http.uri.params'.district]" /> -->
+            <add-message-property key="daysBack" value="#[message.inboundProperties.'http.uri.params'.daysBack]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+       	<logger message="payload in process layer before sys layer call #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <http:request config-ref="HTTP_Request_Configuration" path="/well/international/report/{daysBack}/${wellinfo.sysapi.jobstatus.completion}" method="GET" doc:name="HTTPS - Get completion for number of days back International">
+            <http:request-builder>
+                <http:uri-param paramName="daysBack" value="#[flowVars.daysBack]" />
+            </http:request-builder>
+        </http:request>
+        <logger message="payload in process layer after json-to-object #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-proc-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-proc-getGlobalReport-daily-completion-main-flow">
+       <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+       	<logger message="payload in process layer before sys layer call #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <http:request config-ref="HTTP_Request_Configuration" path="/well/international/report/1/${wellinfo.sysapi.jobstatus.completion}" method="GET" doc:name="HTTPS - Get prior days completion International">
+        </http:request>
+        <logger message="payload in process layer after json-to-object #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-proc-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+	
+    <flow name="well-info-proc-getGlobalReport-daysBack-drilling-main-flow">
+       <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="daysBack" value="#[message.inboundProperties.'http.uri.params'.daysBack]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+       	<logger message="payload in process layer before sys layer call #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <http:request config-ref="HTTP_Request_Configuration" path="/well/international/report/{daysBack}/${wellinfo.sysapi.jobstatus.drilling}" method="GET" doc:name="HTTPS - Get drilling for number of days back International">
+            <http:request-builder>
+                <http:uri-param paramName="daysBack" value="#[flowVars.daysBack]" />
+            </http:request-builder>
+        </http:request>
+        <logger message="payload in process layer after json-to-object #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-proc-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-proc-getGlobalReport-daily-drilling-main-flow">
+       <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+       	<logger message="payload in process layer before sys layer call #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <http:request config-ref="HTTP_Request_Configuration" path="/well/international/report/1/${wellinfo.sysapi.jobstatus.drilling}" method="GET" doc:name="HTTPS - Get prior days drilling International">
+        </http:request>
+        <logger message="payload in process layer after json-to-object #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-proc-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-proc-getCostReport-daysBack-wellId-main-flow">
+       <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="wellId" value="#[message.inboundProperties.'http.uri.params'.wellId]" />
+            <add-message-property key="daysBack" value="#[message.inboundProperties.'http.uri.params'.daysBack]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+       	<logger message="payload in process layer before sys layer call #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <http:request config-ref="HTTP_Request_Configuration" path="/well/{wellId}/costReport/{daysBack}" method="GET" doc:name="HTTPS - Get cost report by well id">
+            <http:request-builder>
+                <http:uri-param paramName="wellId" value="#[flowVars.wellId]" />
+                <http:uri-param paramName="daysBack" value="#[flowVars.daysBack]" />
+            </http:request-builder>
+        </http:request>
+        <logger message="payload in process layer after json-to-object #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-proc-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-proc-getJobCostReport-reportDaysBack-jobDaysBack-main-flow">
+       <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="reportDaysBack" value="#[message.inboundProperties.'http.uri.params'.reportDaysBack]" />
+            <add-message-property key="jobDaysBack" value="#[message.inboundProperties.'http.uri.params'.jobDaysBack]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+       	<logger message="payload in process layer before sys layer call #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <http:request config-ref="HTTP_Request_Configuration" path="/well/jobCostReport/{reportDaysBack}/{jobDaysBack}" method="GET" doc:name="HTTPS - Get cost report by well id">
+            <http:request-builder>
+                <http:uri-param paramName="reportDaysBack" value="#[flowVars.reportDaysBack]" />
+                <http:uri-param paramName="jobDaysBack" value="#[flowVars.jobDaysBack]" />
+            </http:request-builder>
+        </http:request>
+        <logger message="payload in process layer after json-to-object #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-proc-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-proc-getJobReport-daysBack-main-flow">
+       <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="daysBack" value="#[message.inboundProperties.'http.uri.params'.daysBack]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+       	<logger message="payload in process layer before sys layer call #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <http:request config-ref="HTTP_Request_Configuration" path="/well/jobReport/{daysBack}" method="GET" doc:name="HTTPS - Get cost report by well id">
+            <http:request-builder>
+                <http:uri-param paramName="daysBack" value="#[flowVars.daysBack]" />
+            </http:request-builder>
+        </http:request>
+        <logger message="payload in process layer after json-to-object #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <set-payload value="#[payload]" doc:name="Set Payload" />
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-proc-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    
+    <flow name="well-info-proc-getTimeLog-daysBack-main-flow">
+       <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;+#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_ENTRY_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="+Logger" />
+        <message-properties-transformer scope="invocation" doc:name="Message Properties">
+            <add-message-property key="daysBack" value="#[message.inboundProperties.'http.uri.params'.daysBack]" />
+        	<add-message-property key="flowName" value="#[context:serviceName]"/>
+        </message-properties-transformer>
+       	<logger message="payload in process layer before sys layer call #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger" />
+        <async doc:name="Async">
+            <flow-ref name="auditStartFlow" doc:name="auditStartFlow"/>
+        </async>
+        <http:request config-ref="HTTP_Request_Configuration" path="/well/timeLog/{daysBack}" method="GET" doc:name="HTTPS - Get Time Log by well id">
+            <http:request-builder>
+                <http:uri-param paramName="daysBack" value="#[flowVars.daysBack]" />
+            </http:request-builder>
+        </http:request>
+        <logger message="after call to system layer " level="INFO" doc:name="Logger" />
+        <set-payload value="#[payload]" doc:name="Set Payload" mimeType="application/json"/>
+        <async doc:name="Async">
+            <flow-ref name="auditEndFlow" doc:name="auditEndFlow"/>
+        </async>
+        <logger message="{ &quot;API_NAME&quot; : &quot;${api.name}&quot;, &quot;API_VERSION&quot;: &quot;${api.version}&quot;, &quot;FLOW_NAME&quot;: &quot;-#[flow.name]&quot;, &quot;MULE_ID&quot;: &quot;#[message.id]&quot;, &quot;MULE_EXIT_TIME:&quot;: &quot;#[java.lang.System.currentTimeMillis()]&quot;}" level="INFO" doc:name="-Logger" />
+        <exception-strategy ref="well-info-proc-Custom_Exception_Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+</mule>

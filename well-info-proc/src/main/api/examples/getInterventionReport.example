@@ -1,0 +1,31 @@
+[{
+	"district": "US Onshore",
+	"afetotalcalc": 180000.0,
+	"costtotalcalc": 166042.98999999996,
+	"idrec": "5EF2EC8099964B288D0E160DF8C1999D",
+	"dttmstart": 1525915800000,
+	"idwell": "7D959BFB2543442DB6224DDF76A80749",
+	"wellname": "Atzger Unit 2H",
+	"rigno": "Key 6124",
+	"wvtyp": "Intervention",
+	"fieldname": "Karnes",
+	"currencycode": null,
+	"usertxt1": "RIH/POOH Pump and Rods",
+	"summaryops": "Finish IH w/ Rods Re Commission RD",
+	"dttmend": 1525951800000
+}, {
+	"district": "US Onshore",
+	"afetotalcalc": 20000.0,
+	"costtotalcalc": 10978.39,
+	"idrec": "8C1D15F6BE554A4C96D0C8586D27D288",
+	"dttmstart": 1525923000000,
+	"idwell": "9AAEABF7EE8B49ED969301B5BA35E12D",
+	"wellname": "Baring 2H",
+	"rigno": "Pioneer 109",
+	"wvtyp": "Intervention",
+	"fieldname": "West Tilden",
+	"currencycode": null,
+	"usertxt1": "Secure for Frac/ Return to Production",
+	"summaryops": "Install 10K Dry Hole Tree",
+	"dttmend": 1525977000000
+}]

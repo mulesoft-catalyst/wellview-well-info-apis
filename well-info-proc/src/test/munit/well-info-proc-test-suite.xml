@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd">
+    <munit:config mock-connectors="false" mock-inbounds="false" name="munit" doc:name="MUnit configuration"/>
+    <spring:beans>
+        <spring:import resource="classpath:global.xml"/>
+        <spring:import resource="classpath:well-info-proc.xml"/>
+        <spring:import resource="classpath:well-info-proc-impl.xml"/>
+        <spring:import resource="classpath:well-info-proc-error-handler.xml"/>
+    </spring:beans>
+    <munit:test name="well-info-proc-test-suite-get:/report/daily/completion/{district}:wellinfo-proc-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock  HTTPS - Get prior day completion">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['HTTPS - Get prior day completion']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[getResource('responses/completion.json').asString().replaceAll('\\n|\\s','')]">
+                <mock:inbound-properties>
+                    <mock:inbound-property key="http.status" value="200"/>
+                </mock:inbound-properties>
+            </mock:then-return>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[[&quot;district&quot;:&quot;US Onshore&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/report/daily/completion/{district}:wellinfo-proc-config" doc:name="Flow-ref to get:/report/daily/completion/{district}:wellinfo-proc-config"/>
+        <munit:assert-on-equals message="The response payload is not correct!" expectedValue="#[getResource('responses/completion.json').asString().replaceAll('\\n|\\s','')]" actualValue="#[message.payloadAs(java.lang.String).replaceAll('\\n|\\s','')]" doc:name="assert that - payload is as expected"/>
+    </munit:test>
+    <munit:test name="well-info-proc-test-suite-get:/report/{daysBack}/completion/{district}:wellinfo-proc-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock  HTTPS - Get completion for number of days back">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['HTTPS - Get completion for number of days back']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[getResource('responses/completion.json').asString().replaceAll('\\n|\\s','')]">
+                <mock:inbound-properties>
+                    <mock:inbound-property key="http.status" value="200"/>
+                </mock:inbound-properties>
+            </mock:then-return>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[[&quot;district&quot;:&quot;US Onshore&quot;,&quot;daysBack&quot;:&quot;1&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/report/{daysBack}/completion/{district}:wellinfo-proc-config" doc:name="Flow-ref to get:/report/{daysBack}/completion/{district}:wellinfo-proc-config"/>
+        <munit:assert-on-equals message="The response payload is not correct!" expectedValue="#[getResource('responses/completion.json').asString().replaceAll('\\n|\\s','')]" actualValue="#[message.payloadAs(java.lang.String).replaceAll('\\n|\\s','')]" doc:name="assert that - payload is as expected"/>
+    </munit:test>
+    <munit:test name="well-info-proc-test-suite-get:/report/daily/drilling/{district}:wellinfo-proc-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock  HTTPS - Get prior day drilling">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['HTTPS - Get prior day drilling']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[getResource('responses/drilling.json').asString().replaceAll('\\n|\\s','')]">
+                <mock:inbound-properties>
+                    <mock:inbound-property key="http.status" value="200"/>
+                </mock:inbound-properties>
+            </mock:then-return>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[[&quot;district&quot;:&quot;US Onshore&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/report/daily/drilling/{district}:wellinfo-proc-config" doc:name="Flow-ref to get:/report/daily/drilling/{district}:wellinfo-proc-config"/>
+        <munit:assert-on-equals message="The response payload is not correct!" expectedValue="#[getResource('responses/drilling.json').asString().replaceAll('\\n|\\s','')]" actualValue="#[message.payloadAs(java.lang.String).replaceAll('\\n|\\s','')]" doc:name="assert that - payload is as expected"/>
+    </munit:test>
+    <munit:test name="well-info-proc-test-suite-get:/report/{daysBack}/drilling/{district}:wellinfo-proc-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock  HTTPS - Get drilling for number of days back">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['HTTPS - Get drilling for number of days back']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[getResource('responses/drilling.json').asString().replaceAll('\\n|\\s','')]">
+                <mock:inbound-properties>
+                    <mock:inbound-property key="http.status" value="200"/>
+                </mock:inbound-properties>
+            </mock:then-return>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[[&quot;district&quot;:&quot;US Onshore&quot;,&quot;daysBack&quot;:&quot;1&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/report/{daysBack}/drilling/{district}:wellinfo-proc-config" doc:name="Flow-ref to get:/report/{daysBack}/drilling/{district}:wellinfo-proc-config"/>
+        <munit:assert-on-equals message="The response payload is not correct!" expectedValue="#[getResource('responses/drilling.json').asString().replaceAll('\\n|\\s','')]" actualValue="#[message.payloadAs(java.lang.String).replaceAll('\\n|\\s','')]" doc:name="assert that - payload is as expected"/>
+    </munit:test>
+    <munit:test name="well-info-proc-test-suite-get:/report/daily/intervention/{district}:wellinfo-proc-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock  HTTPS - Get prior day intervention">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['HTTPS - Get prior day intervention']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[getResource('responses/intervention.json').asString().replaceAll('\\n|\\s','')]">
+                <mock:inbound-properties>
+                    <mock:inbound-property key="http.status" value="200"/>
+                </mock:inbound-properties>
+            </mock:then-return>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[[&quot;district&quot;:&quot;US Onshore&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/report/daily/intervention/{district}:wellinfo-proc-config" doc:name="Flow-ref to get:/report/daily/intervention/{district}:wellinfo-proc-config"/>
+        <munit:assert-on-equals message="The response payload is not correct!" expectedValue="#[getResource('responses/intervention.json').asString().replaceAll('\\n|\\s','')]" actualValue="#[message.payloadAs(java.lang.String).replaceAll('\\n|\\s','')]" doc:name="assert that - payload is as expected"/>
+    </munit:test>
+    <munit:test name="well-info-proc-test-suite-get:/report/{daysBack}/intervention/{district}:wellinfo-proc-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock  HTTPS - Get intervention for number of days back">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['HTTPS - Get intervention for number of days back']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[getResource('responses/intervention.json').asString().replaceAll('\\n|\\s','')]">
+                <mock:inbound-properties>
+                    <mock:inbound-property key="http.status" value="200"/>
+                </mock:inbound-properties>
+            </mock:then-return>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[[&quot;district&quot;:&quot;US Onshore&quot;,&quot;daysBack&quot;:&quot;1&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/report/{daysBack}/intervention/{district}:wellinfo-proc-config" doc:name="Flow-ref to get:/report/{daysBack}/intervention/{district}:wellinfo-proc-config"/>
+        <munit:assert-on-equals message="The response payload is not correct!" expectedValue="#[getResource('responses/intervention.json').asString().replaceAll('\\n|\\s','')]" actualValue="#[message.payloadAs(java.lang.String).replaceAll('\\n|\\s','')]" doc:name="assert that - payload is as expected"/>
+    </munit:test>
+    <munit:test name="well-info-proc-test-suite-get:/internationalReport/{daysBack}/intervention:wellinfo-proc-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock  HTTPS - Get intervention for number of days back">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['HTTPS - Get intervention for number of days back International']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[getResource('responses/interventionInt.json').asString().replaceAll('\\n|\\s','')]">
+                <mock:inbound-properties>
+                    <mock:inbound-property key="http.status" value="200"/>
+                </mock:inbound-properties>
+            </mock:then-return>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[[&quot;district&quot;:&quot;US Onshore&quot;,&quot;daysBack&quot;:&quot;1&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/internationalReport/{daysBack}/intervention:wellinfo-proc-config" doc:name="Flow-ref to get:/internationalReport/{daysBack}/intervention:wellinfo-proc-config"/>
+        <munit:assert-on-equals message="The response payload is not correct!" expectedValue="#[getResource('responses/interventionInt.json').asString().replaceAll('\\n|\\s','')]" actualValue="#[message.payloadAs(java.lang.String).replaceAll('\\n|\\s','')]" doc:name="assert that - payload is as expected"/>
+    </munit:test>
+    
+    <munit:test name="well-info-proc-test-suite-get:/internationalReport/daily/intervention:wellinfo-proc-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock  HTTPS - Get intervention daily for international">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['HTTPS - Get prior days intervention International']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[getResource('responses/interventionInt.json').asString().replaceAll('\\n|\\s','')]">
+                <mock:inbound-properties>
+                    <mock:inbound-property key="http.status" value="200"/>
+                </mock:inbound-properties>
+            </mock:then-return>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[[&quot;district&quot;:&quot;US Onshore&quot;,&quot;daysBack&quot;:&quot;1&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="get:/internationalReport/daily/intervention:wellinfo-proc-config" doc:name="Flow-ref to get:/internationalReport/daily/intervention:wellinfo-proc-config"/>
+        <munit:assert-on-equals message="The response payload is not correct!" expectedValue="#[getResource('responses/interventionInt.json').asString().replaceAll('\\n|\\s','')]" actualValue="#[message.payloadAs(java.lang.String).replaceAll('\\n|\\s','')]" doc:name="assert that - payload is as expected"/>
+    </munit:test>
+    
+    <munit:test name="well-info-proc-test-suite-get:/internationalReport/{daysBack}/completion:wellinfo-proc-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock  HTTPS - Get completion days back for international">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['HTTPS - Get completion for number of days back International']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[getResource('responses/completionInt.json').asString().replaceAll('\\n|\\s','')]">
+                <mock:inbound-properties>
+                    <mock:inbound-property key="http.status" value="200"/>
+                </mock:inbound-properties>
+            </mock:then-return>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[[&quot;district&quot;:&quot;US Onshore&quot;,&quot;daysBack&quot;:&quot;1&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        
+        <flow-ref name="get:/internationalReport/{daysBack}/completion:wellinfo-proc-config" doc:name="Flow-ref to get:/internationalReport/{daysBack}/completion:wellinfo-proc-config"/>
+    	<munit:assert-on-equals message="The response payload is not correct!" expectedValue="#[getResource('responses/completionInt.json').asString().replaceAll('\\n|\\s','')]" actualValue="#[message.payloadAs(java.lang.String).replaceAll('\\n|\\s','')]" doc:name="assert that - payload is as expected"/>
+    
+    </munit:test>
+    
+    <munit:test name="well-info-proc-test-suite-get:/internationalReport/daily/completion:wellinfo-proc-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock  HTTPS - Get completion daily for international">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['HTTPS - Get prior days completion International']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[getResource('responses/completionInt.json').asString().replaceAll('\\n|\\s','')]">
+                <mock:inbound-properties>
+                    <mock:inbound-property key="http.status" value="200"/>
+                </mock:inbound-properties>
+            </mock:then-return>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[[&quot;district&quot;:&quot;US Onshore&quot;,&quot;daysBack&quot;:&quot;1&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        
+        <flow-ref name="get:/internationalReport/daily/completion:wellinfo-proc-config" doc:name="Flow-ref to get:/internationalReport/daily/completion:wellinfo-proc-config"/>
+    	<munit:assert-on-equals message="The response payload is not correct!" expectedValue="#[getResource('responses/completionInt.json').asString().replaceAll('\\n|\\s','')]" actualValue="#[message.payloadAs(java.lang.String).replaceAll('\\n|\\s','')]" doc:name="assert that - payload is as expected"/>
+    
+    </munit:test>
+    
+    <munit:test name="well-info-proc-test-suite-get:/internationalReport/{daysBack}/drilling:wellinfo-proc-configTest" description="Test">
+    	<mock:when messageProcessor=".*:.*" doc:name="Mock  HTTPS - Get drilling days back for international">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['HTTPS - Get drilling for number of days back International']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[getResource('responses/drillingInt.json').asString().replaceAll('\\n|\\s','')]">
+                <mock:inbound-properties>
+                    <mock:inbound-property key="http.status" value="200"/>
+                </mock:inbound-properties>
+            </mock:then-return>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[[&quot;district&quot;:&quot;US Onshore&quot;,&quot;daysBack&quot;:&quot;1&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        
+        
+        <flow-ref name="get:/internationalReport/{daysBack}/drilling:wellinfo-proc-config" doc:name="Flow-ref to get:/internationalReport/{daysBack}/drilling:wellinfo-proc-config"/>
+    	<munit:assert-on-equals message="The response payload is not correct!" expectedValue="#[getResource('responses/drillingInt.json').asString().replaceAll('\\n|\\s','')]" actualValue="#[message.payloadAs(java.lang.String).replaceAll('\\n|\\s','')]" doc:name="assert that - payload is as expected"/>
+    
+    </munit:test>
+    
+    <munit:test name="well-info-proc-test-suite-get:/internationalReport/daily/drilling:wellinfo-proc-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock  HTTPS - Get drilling daily for international">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['HTTPS - Get prior days drilling International']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[getResource('responses/drillingInt.json').asString().replaceAll('\\n|\\s','')]">
+                <mock:inbound-properties>
+                    <mock:inbound-property key="http.status" value="200"/>
+                </mock:inbound-properties>
+            </mock:then-return>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditStartFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditStartFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <mock:when messageProcessor="mule:flow" doc:name="Mock -auditEndFlow">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('auditEndFlow')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message">
+            <munit:inbound-properties>
+                <munit:inbound-property key="http.uri.params" value="#[[&quot;district&quot;:&quot;US Onshore&quot;,&quot;daysBack&quot;:&quot;1&quot;]]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        
+        <flow-ref name="get:/internationalReport/daily/drilling:wellinfo-proc-config" doc:name="Flow-ref to get:/internationalReport/daily/drilling:wellinfo-proc-config"/>
+    	
+    	<munit:assert-on-equals message="The response payload is not correct!" expectedValue="#[getResource('responses/drillingInt.json').asString().replaceAll('\\n|\\s','')]" actualValue="#[message.payloadAs(java.lang.String).replaceAll('\\n|\\s','')]" doc:name="assert that - payload is as expected"/>
+    
+    </munit:test>
+</mule>
